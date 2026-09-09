@@ -30,6 +30,7 @@ import { CrudFormModal } from './CrudFormModal';
 import { UsersModule } from './UsersModule';
 import { SettingsModule } from './SettingsModule';
 import { Toast, useToast } from './Toast';
+import { FirebaseStatusGuide } from './FirebaseStatusGuide';
 
 interface AdminDashboardLayoutProps {
   currentUser: CmsUser;
@@ -223,7 +224,11 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
       await refreshData();
     } catch (err: any) {
       console.error('Save error:', err);
-      addToast('error', 'Save Failed', err?.message || 'An error occurred while saving.');
+      const isPermissionDenied = err?.code === 'permission-denied' || String(err).includes('permission') || String(err).includes('PERMISSION_DENIED');
+      const errorMsg = isPermissionDenied
+        ? 'Firebase Permission Denied! Firestore security rules are blocking writes. Open Firebase Console > Firestore Database > Rules and set "allow read, write: if true;"'
+        : err?.message || 'An error occurred while saving to database.';
+      addToast('error', 'Save Failed', errorMsg);
     }
   };
 
@@ -1003,7 +1008,10 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
         </header>
 
         {/* Tab Content Workspace */}
-        <main className="flex-1 p-4 sm:p-7 max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-7 max-w-7xl w-full mx-auto space-y-6">
+
+          {/* Cloud Database Diagnostic Banner */}
+          <FirebaseStatusGuide />
           
           {activeTab === 'overview' && (
             <OverviewTab

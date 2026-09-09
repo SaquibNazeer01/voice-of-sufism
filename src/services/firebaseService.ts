@@ -14,9 +14,70 @@ import { db, storage, isFirebaseConfigured } from '../lib/firebaseClient';
 import { Article, SufiSaint, HeritageSite, PoemVerse, PhotoGalleryItem } from '../types';
 import { CmsUser, CmsCategoryItem, KashmiriCultureItem, FolkloreStory, SiteSettings, ActivityLog, Advertisement, Sponsor } from '../types/cms';
 
+export interface FirebaseHealthStatus {
+  isConfigured: boolean;
+  isConnected: boolean;
+  canRead: boolean;
+  canWrite: boolean;
+  errorCode?: string;
+  errorMessage?: string;
+}
+
 export class FirebaseService {
   static isAvailable(): boolean {
     return isFirebaseConfigured && db !== null;
+  }
+
+  // Diagnostic health check for Cloud Firestore
+  static async checkHealth(): Promise<FirebaseHealthStatus> {
+    if (!this.isAvailable()) {
+      return {
+        isConfigured: false,
+        isConnected: false,
+        canRead: false,
+        canWrite: false,
+        errorCode: 'not-configured',
+        errorMessage: 'Firebase credentials are missing from environment variables (VITE_FIREBASE_API_KEY, VITE_FIREBASE_PROJECT_ID).'
+      };
+    }
+
+    let canRead = false;
+    let canWrite = false;
+    let errorCode: string | undefined;
+    let errorMessage: string | undefined;
+
+    // Test Read
+    try {
+      await getDocs(query(collection(db!, 'articles')));
+      canRead = true;
+    } catch (err: any) {
+      console.warn('Firebase health read check error:', err);
+      errorCode = err?.code || 'read-failed';
+      errorMessage = err?.message || 'Read access denied';
+    }
+
+    // Test Write (Probe document in _health_check collection)
+    try {
+      const probeRef = doc(db!, '_health_check', 'connection_probe');
+      await setDoc(probeRef, {
+        probeTime: new Date().toISOString(),
+        status: 'ok'
+      }, { merge: true });
+      canWrite = true;
+    } catch (err: any) {
+      console.warn('Firebase health write check error:', err);
+      if (!errorCode) errorCode = err?.code || 'write-failed';
+      if (!errorMessage) errorMessage = err?.message || 'Write access denied';
+    }
+
+    return {
+      isConfigured: true,
+      isConnected: canRead || canWrite,
+      canRead,
+      canWrite,
+      errorCode: canWrite ? undefined : errorCode,
+      errorMessage: canWrite ? undefined : errorMessage
+    };
   }
 
   // Storage Uploads
@@ -30,9 +91,9 @@ export class FirebaseService {
       const storageRef = ref(storage, fileName);
       const snapshot = await uploadBytes(storageRef, file);
       return await getDownloadURL(snapshot.ref);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Firebase Storage upload error:', err);
-      return URL.createObjectURL(file);
+      throw new Error(`Firebase Storage Upload Failed: ${err?.message || 'Check storage rules.'}`);
     }
   }
 
@@ -65,9 +126,9 @@ export class FirebaseService {
       };
       await setDoc(docRef, payload, { merge: true });
       return payload as Article;
-    } catch (err) {
+    } catch (err: any) {
       console.error('Firebase saveArticle error:', err);
-      return article;
+      throw err;
     }
   }
 
@@ -76,9 +137,9 @@ export class FirebaseService {
     try {
       await deleteDoc(doc(db!, 'articles', id));
       return true;
-    } catch (err) {
+    } catch (err: any) {
       console.error('Firebase deleteArticle error:', err);
-      return false;
+      throw err;
     }
   }
 
@@ -106,9 +167,9 @@ export class FirebaseService {
       const payload = { ...saint, id, updatedAt: new Date().toISOString() };
       await setDoc(docRef, payload, { merge: true });
       return payload as SufiSaint;
-    } catch (err) {
+    } catch (err: any) {
       console.error('Firebase saveSaint error:', err);
-      return saint;
+      throw err;
     }
   }
 
@@ -117,8 +178,9 @@ export class FirebaseService {
     try {
       await deleteDoc(doc(db!, 'sufi_saints', id));
       return true;
-    } catch (err) {
-      return false;
+    } catch (err: any) {
+      console.error('Firebase deleteSaint error:', err);
+      throw err;
     }
   }
 
@@ -145,8 +207,9 @@ export class FirebaseService {
       const payload = { ...site, id, updatedAt: new Date().toISOString() };
       await setDoc(docRef, payload, { merge: true });
       return payload as HeritageSite;
-    } catch (err) {
-      return site;
+    } catch (err: any) {
+      console.error('Firebase saveSite error:', err);
+      throw err;
     }
   }
 
@@ -155,8 +218,9 @@ export class FirebaseService {
     try {
       await deleteDoc(doc(db!, 'heritage_sites', id));
       return true;
-    } catch (err) {
-      return false;
+    } catch (err: any) {
+      console.error('Firebase deleteSite error:', err);
+      throw err;
     }
   }
 
@@ -183,8 +247,9 @@ export class FirebaseService {
       const payload = { ...poem, id, updatedAt: new Date().toISOString() };
       await setDoc(docRef, payload, { merge: true });
       return payload as PoemVerse;
-    } catch (err) {
-      return poem;
+    } catch (err: any) {
+      console.error('Firebase savePoem error:', err);
+      throw err;
     }
   }
 
@@ -193,8 +258,9 @@ export class FirebaseService {
     try {
       await deleteDoc(doc(db!, 'poem_verses', id));
       return true;
-    } catch (err) {
-      return false;
+    } catch (err: any) {
+      console.error('Firebase deletePoem error:', err);
+      throw err;
     }
   }
 
@@ -221,8 +287,9 @@ export class FirebaseService {
       const payload = { ...photo, id, updatedAt: new Date().toISOString() };
       await setDoc(docRef, payload, { merge: true });
       return payload as PhotoGalleryItem;
-    } catch (err) {
-      return photo;
+    } catch (err: any) {
+      console.error('Firebase savePhoto error:', err);
+      throw err;
     }
   }
 
@@ -231,8 +298,9 @@ export class FirebaseService {
     try {
       await deleteDoc(doc(db!, 'photo_gallery', id));
       return true;
-    } catch (err) {
-      return false;
+    } catch (err: any) {
+      console.error('Firebase deletePhoto error:', err);
+      throw err;
     }
   }
 
@@ -259,8 +327,9 @@ export class FirebaseService {
       const payload = { ...item, id, updatedAt: new Date().toISOString() };
       await setDoc(docRef, payload, { merge: true });
       return payload as KashmiriCultureItem;
-    } catch (err) {
-      return item;
+    } catch (err: any) {
+      console.error('Firebase saveCultureItem error:', err);
+      throw err;
     }
   }
 
@@ -269,8 +338,9 @@ export class FirebaseService {
     try {
       await deleteDoc(doc(db!, 'culture_items', id));
       return true;
-    } catch (err) {
-      return false;
+    } catch (err: any) {
+      console.error('Firebase deleteCultureItem error:', err);
+      throw err;
     }
   }
 
@@ -297,8 +367,9 @@ export class FirebaseService {
       const payload = { ...story, id, updatedAt: new Date().toISOString() };
       await setDoc(docRef, payload, { merge: true });
       return payload as FolkloreStory;
-    } catch (err) {
-      return story;
+    } catch (err: any) {
+      console.error('Firebase saveFolkloreStory error:', err);
+      throw err;
     }
   }
 
@@ -307,37 +378,17 @@ export class FirebaseService {
     try {
       await deleteDoc(doc(db!, 'folklore_stories', id));
       return true;
-    } catch (err) {
-      return false;
+    } catch (err: any) {
+      console.error('Firebase deleteFolkloreStory error:', err);
+      throw err;
     }
   }
 
-  // 8. SETTINGS
-  static async getSettings(): Promise<SiteSettings | null> {
-    if (!this.isAvailable()) return null;
-    try {
-      const docSnap = await getDoc(doc(db!, 'settings', 'global'));
-      return docSnap.exists() ? (docSnap.data() as SiteSettings) : null;
-    } catch (err) {
-      return null;
-    }
-  }
-
-  static async saveSettings(settings: SiteSettings): Promise<SiteSettings> {
-    if (!this.isAvailable()) return settings;
-    try {
-      await setDoc(doc(db!, 'settings', 'global'), settings, { merge: true });
-      return settings;
-    } catch (err) {
-      return settings;
-    }
-  }
-
-  // 10. CATEGORIES CRUD
+  // 8. CATEGORIES CRUD
   static async getCategories(): Promise<CmsCategoryItem[]> {
     if (!this.isAvailable()) return [];
     try {
-      const snapshot = await getDocs(collection(db!, 'categories'));
+      const snapshot = await getDocs(collection(db!, 'cms_categories'));
       const items: CmsCategoryItem[] = [];
       snapshot.forEach(docSnap => {
         items.push({ id: docSnap.id, ...(docSnap.data() as any) });
@@ -348,34 +399,36 @@ export class FirebaseService {
     }
   }
 
-  static async saveCategory(category: CmsCategoryItem): Promise<CmsCategoryItem> {
-    if (!this.isAvailable()) return category;
+  static async saveCategory(cat: CmsCategoryItem): Promise<CmsCategoryItem> {
+    if (!this.isAvailable()) return cat;
     try {
-      const id = category.id || `cat-${Date.now()}`;
-      const docRef = doc(db!, 'categories', id);
-      const payload = { ...category, id };
+      const id = cat.id || `cat-${Date.now()}`;
+      const docRef = doc(db!, 'cms_categories', id);
+      const payload = { ...cat, id, updatedAt: new Date().toISOString() };
       await setDoc(docRef, payload, { merge: true });
       return payload as CmsCategoryItem;
-    } catch (err) {
-      return category;
+    } catch (err: any) {
+      console.error('Firebase saveCategory error:', err);
+      throw err;
     }
   }
 
   static async deleteCategory(id: string): Promise<boolean> {
     if (!this.isAvailable()) return true;
     try {
-      await deleteDoc(doc(db!, 'categories', id));
+      await deleteDoc(doc(db!, 'cms_categories', id));
       return true;
-    } catch (err) {
-      return false;
+    } catch (err: any) {
+      console.error('Firebase deleteCategory error:', err);
+      throw err;
     }
   }
 
-  // 11. USERS CRUD
+  // 9. USERS CRUD
   static async getUsers(): Promise<CmsUser[]> {
     if (!this.isAvailable()) return [];
     try {
-      const snapshot = await getDocs(collection(db!, 'users'));
+      const snapshot = await getDocs(collection(db!, 'cms_users'));
       const items: CmsUser[] = [];
       snapshot.forEach(docSnap => {
         items.push({ id: docSnap.id, ...(docSnap.data() as any) });
@@ -390,69 +443,32 @@ export class FirebaseService {
     if (!this.isAvailable()) return user;
     try {
       const id = user.id || `user-${Date.now()}`;
-      const docRef = doc(db!, 'users', id);
-      const payload = { ...user, id };
+      const docRef = doc(db!, 'cms_users', id);
+      const payload = { ...user, id, updatedAt: new Date().toISOString() };
       await setDoc(docRef, payload, { merge: true });
       return payload as CmsUser;
-    } catch (err) {
-      return user;
+    } catch (err: any) {
+      console.error('Firebase saveUser error:', err);
+      throw err;
     }
   }
 
   static async deleteUser(id: string): Promise<boolean> {
     if (!this.isAvailable()) return true;
     try {
-      await deleteDoc(doc(db!, 'users', id));
+      await deleteDoc(doc(db!, 'cms_users', id));
       return true;
-    } catch (err) {
-      return false;
+    } catch (err: any) {
+      console.error('Firebase deleteUser error:', err);
+      throw err;
     }
   }
 
-  // 12. LOGS
-  static async getLogs(): Promise<ActivityLog[]> {
-    if (!this.isAvailable()) return [];
-    try {
-      const snapshot = await getDocs(collection(db!, 'activity_logs'));
-      const items: ActivityLog[] = [];
-      snapshot.forEach(docSnap => {
-        items.push({ id: docSnap.id, ...(docSnap.data() as any) });
-      });
-      return items;
-    } catch (err) {
-      return [];
-    }
-  }
-
-  static async logActivity(user: string, action: string, target: string, badgeType: string = 'update') {
-    if (!this.isAvailable()) return;
-    try {
-      const id = `log-${Date.now()}`;
-      const exactTimestamp = new Date().toLocaleString('en-US', { 
-        month: 'short', 
-        day: 'numeric', 
-        year: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit', 
-        hour12: true 
-      });
-      await setDoc(doc(db!, 'activity_logs', id), {
-        id,
-        user,
-        action,
-        target,
-        timestamp: exactTimestamp,
-        badgeType
-      });
-    } catch (err) {}
-  }
-
-  // 13. ADVERTISEMENTS CRUD
+  // 10. ADVERTISEMENTS CRUD
   static async getAdvertisements(): Promise<Advertisement[]> {
     if (!this.isAvailable()) return [];
     try {
-      const snapshot = await getDocs(collection(db!, 'advertisements'));
+      const snapshot = await getDocs(collection(db!, 'cms_advertisements'));
       const items: Advertisement[] = [];
       snapshot.forEach(docSnap => {
         items.push({ id: docSnap.id, ...(docSnap.data() as any) });
@@ -467,30 +483,32 @@ export class FirebaseService {
     if (!this.isAvailable()) return ad;
     try {
       const id = ad.id || `ad-${Date.now()}`;
-      const docRef = doc(db!, 'advertisements', id);
+      const docRef = doc(db!, 'cms_advertisements', id);
       const payload = { ...ad, id, updatedAt: new Date().toISOString() };
       await setDoc(docRef, payload, { merge: true });
       return payload as Advertisement;
-    } catch (err) {
-      return ad;
+    } catch (err: any) {
+      console.error('Firebase saveAdvertisement error:', err);
+      throw err;
     }
   }
 
   static async deleteAdvertisement(id: string): Promise<boolean> {
     if (!this.isAvailable()) return true;
     try {
-      await deleteDoc(doc(db!, 'advertisements', id));
+      await deleteDoc(doc(db!, 'cms_advertisements', id));
       return true;
-    } catch (err) {
-      return false;
+    } catch (err: any) {
+      console.error('Firebase deleteAdvertisement error:', err);
+      throw err;
     }
   }
 
-  // 14. SPONSORS CRUD
+  // 11. SPONSORS CRUD
   static async getSponsors(): Promise<Sponsor[]> {
     if (!this.isAvailable()) return [];
     try {
-      const snapshot = await getDocs(collection(db!, 'sponsors'));
+      const snapshot = await getDocs(collection(db!, 'cms_sponsors'));
       const items: Sponsor[] = [];
       snapshot.forEach(docSnap => {
         items.push({ id: docSnap.id, ...(docSnap.data() as any) });
@@ -504,24 +522,81 @@ export class FirebaseService {
   static async saveSponsor(sponsor: Sponsor): Promise<Sponsor> {
     if (!this.isAvailable()) return sponsor;
     try {
-      const id = sponsor.id || `sp-${Date.now()}`;
-      const docRef = doc(db!, 'sponsors', id);
+      const id = sponsor.id || `spons-${Date.now()}`;
+      const docRef = doc(db!, 'cms_sponsors', id);
       const payload = { ...sponsor, id, updatedAt: new Date().toISOString() };
       await setDoc(docRef, payload, { merge: true });
       return payload as Sponsor;
-    } catch (err) {
-      return sponsor;
+    } catch (err: any) {
+      console.error('Firebase saveSponsor error:', err);
+      throw err;
     }
   }
 
   static async deleteSponsor(id: string): Promise<boolean> {
     if (!this.isAvailable()) return true;
     try {
-      await deleteDoc(doc(db!, 'sponsors', id));
+      await deleteDoc(doc(db!, 'cms_sponsors', id));
       return true;
+    } catch (err: any) {
+      console.error('Firebase deleteSponsor error:', err);
+      throw err;
+    }
+  }
+
+  // 12. SETTINGS CRUD
+  static async getSettings(): Promise<SiteSettings | null> {
+    if (!this.isAvailable()) return null;
+    try {
+      const docSnap = await getDoc(doc(db!, 'cms_settings', 'global_config'));
+      if (docSnap.exists()) {
+        return docSnap.data() as SiteSettings;
+      }
+      return null;
     } catch (err) {
-      return false;
+      return null;
+    }
+  }
+
+  static async saveSettings(settings: SiteSettings): Promise<SiteSettings> {
+    if (!this.isAvailable()) return settings;
+    try {
+      const docRef = doc(db!, 'cms_settings', 'global_config');
+      await setDoc(docRef, { ...settings, updatedAt: new Date().toISOString() }, { merge: true });
+      return settings;
+    } catch (err: any) {
+      console.error('Firebase saveSettings error:', err);
+      throw err;
+    }
+  }
+
+  // 13. ACTIVITY LOGS CRUD
+  static async getActivityLogs(): Promise<ActivityLog[]> {
+    if (!this.isAvailable()) return [];
+    try {
+      const snapshot = await getDocs(collection(db!, 'cms_activity_logs'));
+      const items: ActivityLog[] = [];
+      snapshot.forEach(docSnap => {
+        items.push({ id: docSnap.id, ...(docSnap.data() as any) });
+      });
+      return items.sort((a, b) => (b.timestamp || '').localeCompare(a.timestamp || ''));
+    } catch (err) {
+      return [];
+    }
+  }
+
+  static async addActivityLog(log: Omit<ActivityLog, 'id' | 'timestamp'>): Promise<void> {
+    if (!this.isAvailable()) return;
+    try {
+      const id = `log-${Date.now()}`;
+      const docRef = doc(db!, 'cms_activity_logs', id);
+      const exactTimestamp = new Date().toLocaleString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+      });
+      await setDoc(docRef, { ...log, id, timestamp: exactTimestamp });
+    } catch (err) {
+      console.warn('Failed to log activity to Firebase:', err);
     }
   }
 }
-
