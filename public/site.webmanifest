@@ -1,0 +1,18 @@
+{
+  "name": "Voice of Sufism (صداۓ تصوف)",
+  "short_name": "Voice of Sufism",
+  "description": "Kashmir's Sacred Living Sufi Sanctuary & Digital Heritage Archive",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0a0b",
+  "theme_color": "#450a0a",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Voice of Sufism",
+  "description": "Kashmir heritage and exploration publication documenting Sufi saints, shrines, Kashmiri culture, language, folklore, and heritage sites.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

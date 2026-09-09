@@ -1,0 +1,11 @@
+# Voice of Sufism (صداۓ تصوف) - Robots.txt
+# https://voiceofsufism.org/
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api/*
+
+# Sitemap
+Sitemap: https://voiceofsufism.org/sitemap.xml

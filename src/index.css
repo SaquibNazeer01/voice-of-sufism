@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500;1,700&family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap');
+@import "tailwindcss";
+
+/* ─── MARQUEE ────────────────────────────────────── */
+@keyframes marquee {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee 18s linear infinite;
+  will-change: transform;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ─── FADE IN UP ─────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeInUp {
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ─── FADE IN ────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+/* ─── SLIDE IN RIGHT ─────────────────────────────── */
+@keyframes slideInRight {
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+.animate-slideInRight {
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ─── SHIMMER ────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, #FDE68A 0%, #FBBF24 30%, #FDE68A 60%, #F59E0B 100%);
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ─── PULSE GOLD ─────────────────────────────────── */
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251,191,36,0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(251,191,36,0); }
+}
+.animate-pulse-gold {
+  animation: pulseGold 2s ease-in-out infinite;
+}
+
+/* ─── THEME CSS VARIABLES ─────────────────────────── */
+:root {
+  --app-bg: #FAF8F5;
+  --app-card-bg: #FFFFFF;
+  --app-text-main: #0F172A;
+  --app-text-muted: #475569;
+  --app-border: #E2E8F0;
+  --app-accent-badge: #FEF3C7;
+  --app-accent-text: #92400E;
+  --font-editorial: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ─── IVORY THEME (DEFAULT) ───────────────────────── */
+.theme-ivory {
+  --app-bg: #FAF8F5;
+  --app-card-bg: #FFFFFF;
+  --app-text-main: #0F172A;
+  --app-text-muted: #475569;
+  --app-border: #E2E8F0;
+  --app-accent-badge: #FEF3C7;
+  --app-accent-text: #92400E;
+  background-color: #FAF8F5 !important;
+  color: #0F172A !important;
+}
+
+/* ─── SEPIA THEME ─────────────────────────────────── */
+.theme-sepia {
+  --app-bg: #F4EFEA;
+  --app-card-bg: #FAF5EE;
+  --app-text-main: #2B231B;
+  --app-text-muted: #5C4B3C;
+  --app-border: #E6DCD1;
+  --app-accent-badge: #EFE5D8;
+  --app-accent-text: #6B4E2B;
+  background-color: #F4EFEA !important;
+  color: #2B231B !important;
+}
+
+/* ─── DARK THEME ──────────────────────────────────── */
+.theme-dark {
+  --app-bg: #09090B;
+  --app-card-bg: #141417;
+  --app-text-main: #F8FAFC;
+  --app-text-muted: #94A3B8;
+  --app-border: #27272A;
+  --app-accent-badge: #27272A;
+  --app-accent-text: #FBBF24;
+  background-color: #09090B !important;
+  color: #F8FAFC !important;
+}
+
+/* ─── DARK THEME OVERRIDES ────────────────────────── */
+.theme-dark .bg-white {
+  background-color: #18181B !important;
+  color: #F4F4F5 !important;
+  border-color: #27272A !important;
+}
+.theme-dark .bg-\[\#FAF8F5\] { background-color: #09090B !important; }
+.theme-dark .text-slate-900,
+.theme-dark .text-slate-800,
+.theme-dark .text-slate-950 { color: #F4F4F5 !important; }
+.theme-dark .text-slate-700,
+.theme-dark .text-slate-600,
+.theme-dark .text-slate-500 { color: #A1A1AA !important; }
+.theme-dark .border-slate-200,
+.theme-dark .border-slate-100 { border-color: #27272A !important; }
+.theme-dark .bg-slate-50,
+.theme-dark .bg-slate-100 { background-color: #1c1c1f !important; }
+
+/* ─── SEPIA THEME OVERRIDES ───────────────────────── */
+.theme-sepia .bg-white {
+  background-color: #FDFBF7 !important;
+  color: #2B231B !important;
+  border-color: #E6DCD1 !important;
+}
+.theme-sepia .bg-\[\#FAF8F5\] { background-color: #F4EFEA !important; }
+.theme-sepia .text-slate-900,
+.theme-sepia .text-slate-800,
+.theme-sepia .text-slate-950 { color: #2B231B !important; }
+.theme-sepia .text-slate-700,
+.theme-sepia .text-slate-600,
+.theme-sepia .text-slate-500 { color: #5C4B3C !important; }
+.theme-sepia .border-slate-200,
+.theme-sepia .border-slate-100 { border-color: #E6DCD1 !important; }
+
+/* ─── FONT SIZE SCALING ───────────────────────────── */
+.font-size-sm { font-size: 0.9rem !important; }
+.font-size-sm p, .font-size-sm span { font-size: 0.9em; }
+.font-size-md { font-size: 1rem !important; }
+.font-size-lg { font-size: 1.125rem !important; }
+.font-size-lg p, .font-size-lg span { font-size: 1.1em; }
+.font-size-xl { font-size: 1.25rem !important; }
+.font-size-xl p, .font-size-xl span { font-size: 1.2em; }
+
+/* ─── FONT FAMILY ─────────────────────────────────── */
+.font-family-serif {
+  font-family: 'Cormorant Garamond', Georgia, Cambria, 'Times New Roman', Times, serif !important;
+}
+.font-family-sans {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* ─── EDITORIAL FONT UTILITIES ────────────────────── */
+.font-editorial {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+.font-ui {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* ─── GLOBAL SELECTION ────────────────────────────── */
+::selection {
+  background-color: #991B1B;
+  color: #FEF08A;
+}
+
+/* ─── SCROLLBAR ───────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0d0d0f; }
+::-webkit-scrollbar-thumb { background: #7F1D1D; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #B91C1C; }
+.scrollbar-none::-webkit-scrollbar { display: none; }
+.scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── GRADIENT TEXT ───────────────────────────────── */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FDE68A 0%, #FBBF24 50%, #F59E0B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.red-gold-border {
+  border-image: linear-gradient(to right, #991B1B, #F59E0B, #991B1B) 1;
+}
+
+/* ─── NAV TAB INDICATOR ───────────────────────────── */
+.nav-tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: linear-gradient(90deg, #FBBF24, #F59E0B);
+  border-radius: 2px;
+}
+
+/* ─── CARD HOVER LIFT ─────────────────────────────── */
+.card-hover {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* ─── ARTICLE CATEGORY ACCENT ─────────────────────── */
+.category-accent-sufi::before      { background: #7C3AED; }
+.category-accent-shrines::before   { background: #B91C1C; }
+.category-accent-poetry::before    { background: #0369A1; }
+.category-accent-arch::before      { background: #B45309; }
+.category-accent-culture::before   { background: #047857; }
+.category-accent-crafts::before    { background: #BE123C; }
