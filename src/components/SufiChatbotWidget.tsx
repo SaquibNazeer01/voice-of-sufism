@@ -151,7 +151,7 @@ export const SufiChatbotWidget: React.FC<SufiChatbotWidgetProps> = ({
     {
       id: 'msg-welcome',
       sender: 'bot',
-      text: "Assalamu Alaikum & Welcome to Voice of Sufism (صداۓ تصوف) 🕊️\n\nI am your digital heritage assistant. You can ask me about:\n• **Kashmiri Sufi Saints & Reshis** (Sheikh-ul-Alam, Lal Ded, Shah-e-Hamadan, Makhdoom Sahib)\n• **Historic Ziyarats & Architecture** (Charar-i-Sharief, Hazratbal, Khanqah-e-Moula, Aishmuqam)\n• **Poetry Treasury** (Vakhs, Shruks, Sufiana Kalam)\n• **Founder (Sahil Amin) & Leadership**\n• **Lead Engineer (Saquib Nazeer) & Tech Services**\n• **MSME Registration & Submissions**\n\nHow may I assist your inquiry today?",
+      text: "Assalamu Alaikum & Welcome to Voice of Sufism (صداۓ تصوف) 🕊️\n\nI am your digital heritage assistant. You can ask me about:\n• **Kashmiri Sufi Saints & Reshis** (Sheikh-ul-Alam, Lal Ded, Shah-e-Hamadan, Makhdoom Sahib)\n• **Historic Ziyarats & Architecture** (Charar-i-Sharief, Hazratbal, Khanqah-e-Moula, Aishmuqam)\n• **Poetry Treasury** (Vakhs, Shruks, Sufiana Kalam)\n• **Founder (Bhat Sahil) & Leadership**\n• **Lead Engineer (Saquib Nazeer) & Tech Services**\n• **MSME Registration & Submissions**\n\nHow may I assist your inquiry today?",
       timestamp: 'Just now'
     }
   ];
@@ -174,7 +174,7 @@ export const SufiChatbotWidget: React.FC<SufiChatbotWidgetProps> = ({
 
   const quickQuestions = [
     "About Voice of Sufism",
-    "Founder (Sahil Amin)",
+    "Founder (Bhat Sahil)",
     "Developer & Services",
     "Sheikh-ul-Alam & Shruks",
     "Hazratbal & Holy Relic",
@@ -205,7 +205,7 @@ export const SufiChatbotWidget: React.FC<SufiChatbotWidgetProps> = ({
       q.includes('good afternoon')
     ) {
       return {
-        text: "Hey! 🕊️\n\nWelcome to **Voice of Sufism (صداۓ تصوف)**. I am your dedicated digital archive assistant.\n\nHow may I assist you today? You can inquire about:\n• Kashmiri Sufi luminaries and Reshi masters\n• Historical shrines, architecture, and sacred relics\n• Vakhs, Shruks, and classical Sufiana poetry\n• Founder Sahil Amin & Lead Engineer Saquib Nazeer\n• MSME legal credentials, services, or contact details."
+        text: "Hey! 🕊️\n\nWelcome to **Voice of Sufism (صداۓ تصوف)**. I am your dedicated digital archive assistant.\n\nHow may I assist you today? You can inquire about:\n• Kashmiri Sufi luminaries and Reshi masters\n• Historical shrines, architecture, and sacred relics\n• Vakhs, Shruks, and classical Sufiana poetry\n• Founder Bhat Sahil & Lead Engineer Saquib Nazeer\n• MSME legal credentials, services, or contact details."
       };
     }
 
@@ -260,10 +260,11 @@ export const SufiChatbotWidget: React.FC<SufiChatbotWidgetProps> = ({
     }
 
     // ─────────────────────────────────────────────────────────────
-    // 4. FOUNDER & MISSION DIRECTOR (Sahil Amin)
+    // 4. FOUNDER & MISSION DIRECTOR (Bhat Sahil)
     // ─────────────────────────────────────────────────────────────
     if (
       q.includes('founder') ||
+      q.includes('bhat sahil') ||
       q.includes('sahil') ||
       q.includes('sahil amin') ||
       q.includes('owner') ||
@@ -274,7 +275,7 @@ export const SufiChatbotWidget: React.FC<SufiChatbotWidgetProps> = ({
       q.includes('leadership')
     ) {
       return {
-        text: "**Sahil Amin** is the Founder, Editor-in-Chief, and Mission Director of Voice of Sufism.\n\n**Leadership & Vision:**\n• Dedicated Kashmir cultural heritage researcher and field documentarian.\n• Spearheading the systematic documentation of endangered Sufi shrines, classical manuscripts, oral folk histories, and Reshi philosophy across the 20 districts of Jammu & Kashmir.\n• Champion of *Kashmiriyat*—the timeless Kashmiri cultural philosophy of communal brotherhood, universal compassion, and peace.\n\n**Official Correspondence:**\n• **Email:** saahilahbhat1@gmail.com\n• **WhatsApp / Call:** +91 9596154384\n• **Headquarters:** Srinagar, Jammu & Kashmir",
+        text: "**Bhat Sahil** is the Founder, Editor-in-Chief, and Mission Director of Voice of Sufism.\n\n**Leadership & Vision:**\n• Dedicated Kashmir cultural heritage researcher and field documentarian.\n• Spearheading the systematic documentation of endangered Sufi shrines, classical manuscripts, oral folk histories, and Reshi philosophy across the 20 districts of Jammu & Kashmir.\n• Champion of *Kashmiriyat*—the timeless Kashmiri cultural philosophy of communal brotherhood, universal compassion, and peace.\n\n**Official Correspondence:**\n• **Email:** mohmmadaminbhat1@gmail.com\n• **WhatsApp / Call:** +91 9596154384\n• **Headquarters:** Srinagar, Jammu & Kashmir\n\n**Official Social Media:**\n• **YouTube:** youtube.com/@voicesaahil1913\n• **Instagram:** @voice_of_sufism\n• **Facebook:** facebook.com/share/1BgsXBbhqw/\n• **Pinterest:** pin.it/46iHTerEz",
         link: { label: 'Read Founder Story in About Us', action: () => onNavigateTab && onNavigateTab('about') }
       };
     }
@@ -315,10 +316,11 @@ export const SufiChatbotWidget: React.FC<SufiChatbotWidgetProps> = ({
       q.includes('social') ||
       q.includes('instagram') ||
       q.includes('facebook') ||
-      q.includes('youtube')
+      q.includes('youtube') ||
+      q.includes('pinterest')
     ) {
       return {
-        text: "**Official Contact & Editorial Desk:**\n\n• **Phone / WhatsApp:** +91 9596154384\n• **Editorial Email:** saahilahbhat1@gmail.com\n• **Engineering Email:** bhatsaakib505@gmail.com\n• **Registered Office:** Shehr-e-Khaas, Srinagar, Jammu & Kashmir (190002)\n\n**Official Social Media:**\n• **Facebook:** facebook.com/VoiceOfSufism\n• **Instagram:** @voiceofsufism\n• **YouTube:** @voiceofsufism",
+        text: "**Official Contact & Editorial Desk:**\n\n• **Phone / WhatsApp:** +91 9596154384\n• **Editorial Email:** mohmmadaminbhat1@gmail.com\n• **Engineering Email:** bhatsaakib505@gmail.com\n• **Registered Office:** Shehr-e-Khaas, Srinagar, Jammu & Kashmir (190002)\n\n**Official Social Media:**\n• **YouTube:** youtube.com/@voicesaahil1913\n• **Instagram:** @voice_of_sufism\n• **Facebook:** facebook.com/share/1BgsXBbhqw/\n• **Pinterest:** pin.it/46iHTerEz",
         link: { label: 'Message Us on WhatsApp', url: 'https://wa.me/919596154384' }
       };
     }
@@ -337,8 +339,8 @@ export const SufiChatbotWidget: React.FC<SufiChatbotWidgetProps> = ({
       q.includes('manuscript')
     ) {
       return {
-        text: "**Contribute to the Digital Archive:**\n\nVoice of Sufism invites historians, scholars, folklorists, and writers to submit authentic research papers, shrine chronicles, and field recordings.\n\n**Submission Guidelines:**\n1. Articles must focus on Kashmir Sufi saints, shrines, poetry, vernacular architecture, or oral traditions.\n2. Submissions should be factually verified with citations or elder oral attributions.\n3. Send your proposal or draft to **saahilahbhat1@gmail.com** or via WhatsApp at **+91 9596154384**.",
-        link: { label: 'Email Editorial Submission', url: 'mailto:saahilahbhat1@gmail.com' }
+        text: "**Contribute to the Digital Archive:**\n\nVoice of Sufism invites historians, scholars, folklorists, and writers to submit authentic research papers, shrine chronicles, and field recordings.\n\n**Submission Guidelines:**\n1. Articles must focus on Kashmir Sufi saints, shrines, poetry, vernacular architecture, or oral traditions.\n2. Submissions should be factually verified with citations or elder oral attributions.\n3. Send your proposal or draft to **mohmmadaminbhat1@gmail.com** or via WhatsApp at **+91 9596154384**.",
+        link: { label: 'Email Editorial Submission', url: 'mailto:mohmmadaminbhat1@gmail.com' }
       };
     }
 
@@ -606,7 +608,7 @@ export const SufiChatbotWidget: React.FC<SufiChatbotWidgetProps> = ({
       q.includes('fund')
     ) {
       return {
-        text: "**Support Voice of Sufism:**\n\nWe welcome cultural patrons, local enterprises, academic institutions, and philanthropy partners who wish to sponsor the digital archiving of Kashmir's sacred heritage.\n\n• **Brand Recognition:** Featured in our Sponsors & Patrons directory.\n• **Preservation Impact:** Funds direct field documentation, translation of rare manuscripts, and shrine photography.\n• **Inquiries:** Contact our Mission Director at **saahilahbhat1@gmail.com** or WhatsApp **+91 9596154384**.",
+        text: "**Support Voice of Sufism:**\n\nWe welcome cultural patrons, local enterprises, academic institutions, and philanthropy partners who wish to sponsor the digital archiving of Kashmir's sacred heritage.\n\n• **Brand Recognition:** Featured in our Sponsors & Patrons directory.\n• **Preservation Impact:** Funds direct field documentation, translation of rare manuscripts, and shrine photography.\n• **Inquiries:** Contact our Mission Director at **mohmmadaminbhat1@gmail.com** or WhatsApp **+91 9596154384**.",
         link: { label: 'Explore Sponsors & Patrons', action: () => onNavigateTab && onNavigateTab('sponsors') }
       };
     }
@@ -615,7 +617,7 @@ export const SufiChatbotWidget: React.FC<SufiChatbotWidgetProps> = ({
     // 23. COMPREHENSIVE, PROFESSIONAL INTELLIGENT FALLBACK
     // ─────────────────────────────────────────────────────────────
     return {
-      text: "Thank you for reaching out to **Voice of Sufism (صداۓ تصوف)**. 🕊️\n\nI want to make sure you find precisely what you are seeking. You can ask me about:\n\n• **Spiritual Luminaries:** Sheikh-ul-Alam Nund Reshi, Shah-e-Hamadan, Lal Ded, Makhdoom Sahib, Baba Zain-ud-Din.\n• **Sacred Shrines:** Charar-i-Sharief, Khanqah-e-Moula, Dargah Hazratbal, Aishmuqam, Jamia Masjid.\n• **Poetry & Wisdom:** Kashmiri Vakhs, Shruks, Sufiana Kalam, and Reshi philosophy.\n• **Platform Leadership:** Founder Sahil Amin, Lead Engineer Saquib Nazeer, or dev services.\n• **Legal & Contact:** MSME Registration (UDYAM-JK-11-0013563) or submitting articles.\n\n*Please type your question or select one of the quick suggestions below.*",
+      text: "Thank you for reaching out to **Voice of Sufism (صداۓ تصوف)**. 🕊️\n\nI want to make sure you find precisely what you are seeking. You can ask me about:\n\n• **Spiritual Luminaries:** Sheikh-ul-Alam Nund Reshi, Shah-e-Hamadan, Lal Ded, Makhdoom Sahib, Baba Zain-ud-Din.\n• **Sacred Shrines:** Charar-i-Sharief, Khanqah-e-Moula, Dargah Hazratbal, Aishmuqam, Jamia Masjid.\n• **Poetry & Wisdom:** Kashmiri Vakhs, Shruks, Sufiana Kalam, and Reshi philosophy.\n• **Platform Leadership:** Founder Bhat Sahil, Lead Engineer Saquib Nazeer, or dev services.\n• **Legal & Contact:** MSME Registration (UDYAM-JK-11-0013563) or submitting articles.\n\n*Please type your question or select one of the quick suggestions below.*",
       link: { label: 'Explore Home Stories', action: () => onNavigateTab && onNavigateTab('home') }
     };
   };

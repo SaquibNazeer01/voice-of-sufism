@@ -28,9 +28,10 @@ export const SettingsModule: React.FC<SettingsModuleProps> = ({ settings, onSave
   const [formData, setFormData] = useState<SiteSettings>({
     contactPhone: '+919596154384',
     whatsappNumber: '+919596154384',
-    facebookUrl: 'https://www.facebook.com/VoiceOfSufism',
-    instagramUrl: 'https://www.instagram.com/voiceofsufism',
-    youtubeUrl: 'https://www.youtube.com/@voiceofsufism',
+    facebookUrl: 'https://www.facebook.com/share/1BgsXBbhqw/',
+    instagramUrl: 'https://www.instagram.com/voice_of_sufism?stkn=ZHg3cTBjcXpvZGJv',
+    youtubeUrl: 'https://youtube.com/@voicesaahil1913?si=4Roj1J0HVJGrjLzX',
+    pinterestUrl: 'https://pin.it/46iHTerEz',
     ...settings
   });
 
@@ -231,12 +232,12 @@ export const SettingsModule: React.FC<SettingsModuleProps> = ({ settings, onSave
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 mb-1">Facebook URL</label>
+              <label className="block font-bold text-slate-700 mb-1">YouTube URL</label>
               <input
                 type="text"
-                value={formData.facebookUrl || ''}
-                onChange={(e) => setFormData({ ...formData, facebookUrl: e.target.value })}
-                placeholder="https://www.facebook.com/VoiceOfSufism"
+                value={formData.youtubeUrl || ''}
+                onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
+                placeholder="https://youtube.com/@voicesaahil1913?si=4Roj1J0HVJGrjLzX"
                 className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
               />
             </div>
@@ -247,7 +248,29 @@ export const SettingsModule: React.FC<SettingsModuleProps> = ({ settings, onSave
                 type="text"
                 value={formData.instagramUrl || ''}
                 onChange={(e) => setFormData({ ...formData, instagramUrl: e.target.value })}
-                placeholder="https://www.instagram.com/voiceofsufism"
+                placeholder="https://www.instagram.com/voice_of_sufism?stkn=ZHg3cTBjcXpvZGJv"
+                className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Facebook URL</label>
+              <input
+                type="text"
+                value={formData.facebookUrl || ''}
+                onChange={(e) => setFormData({ ...formData, facebookUrl: e.target.value })}
+                placeholder="https://www.facebook.com/share/1BgsXBbhqw/"
+                className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block font-bold text-slate-700 mb-1">Pinterest URL</label>
+              <input
+                type="text"
+                value={formData.pinterestUrl || ''}
+                onChange={(e) => setFormData({ ...formData, pinterestUrl: e.target.value })}
+                placeholder="https://pin.it/46iHTerEz"
                 className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:outline-none"
               />
             </div>

@@ -5,8 +5,8 @@ import { CmsUser, CmsCategoryItem, CmsTagItem, KashmiriCultureItem, FolkloreStor
 const INITIAL_USERS: CmsUser[] = [
   {
     id: 'admin-sahil',
-    name: 'Sahil Amin',
-    email: 'saahilahbhat1@gmail.com',
+    name: 'Bhat Sahil',
+    email: 'mohmmadaminbhat1@gmail.com',
     role: 'Super Admin',
     status: 'Active',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',

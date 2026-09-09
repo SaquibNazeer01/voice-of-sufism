@@ -74,6 +74,7 @@ export interface SiteSettings {
   facebookUrl?: string;
   instagramUrl?: string;
   youtubeUrl?: string;
+  pinterestUrl?: string;
   editorialBoard: string;
   maintenanceMode: boolean;
   enableAmbientAudio: boolean;

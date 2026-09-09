@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { 
-  Compass, 
-  Feather, 
-  Code, 
-  Globe, 
-  Info, 
-  ExternalLink, 
-  Terminal, 
-  Layers, 
-  Smartphone, 
-  Briefcase, 
-  Database, 
-  Brain, 
-  Server, 
-  FileCode, 
+import {
+  Compass,
+  Feather,
+  Code,
+  Globe,
+  Info,
+  ExternalLink,
+  Terminal,
+  Layers,
+  Smartphone,
+  Briefcase,
+  Database,
+  Brain,
+  Server,
+  FileCode,
   Check,
   BookOpen,
   Award,
@@ -48,19 +48,37 @@ import {
 /* ── SVG Brand Icons for Developer & Founder ───────────────────────── */
 const GitHubIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+    <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
   </svg>
 );
 
 const LinkedInIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.63 1.63 0 0 0 1.63-1.63c0-.9-.73-1.63-1.63-1.63-.9 0-1.63.73-1.63 1.63 0 .9.73 1.63 1.63 1.63m1.4 9.74v-8.37H5.06v8.37h2.8z"/>
+    <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.63 1.63 0 0 0 1.63-1.63c0-.9-.73-1.63-1.63-1.63-.9 0-1.63.73-1.63 1.63 0 .9.73 1.63 1.63 1.63m1.4 9.74v-8.37H5.06v8.37h2.8z" />
   </svg>
 );
 
 const YouTubeIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
+    <path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z" />
+  </svg>
+);
+
+const InstagramIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+  </svg>
+);
+
+const FacebookIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+  </svg>
+);
+
+const PinterestIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" className={className} fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.171-2.911 1.024 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345-.09.375-.291 1.199-.334 1.357-.057.24-.19.291-.439.175-1.637-.762-2.66-3.153-2.66-5.074 0-4.133 3.003-7.929 8.665-7.929 4.549 0 8.086 3.242 8.086 7.576 0 4.52-2.849 8.161-6.804 8.161-1.328 0-2.576-.69-3.003-1.507l-.817 3.109c-.296 1.127-1.097 2.539-1.634 3.407C9.932 23.824 10.96 24 12.017 24c6.627 0 12-5.373 12-12S18.644 0 12.017 0z" />
   </svg>
 );
 
@@ -208,7 +226,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 animate-fadeIn">
-      
+
       {/* ══════════════════════════════════════════
           HERO BANNER: ABOUT VOICE OF SUFISM
       ══════════════════════════════════════════ */}
@@ -278,11 +296,10 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
               <button
                 type="button"
                 onClick={copyRegistrationNumber}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer ${
-                  copiedMsme
-                    ? 'bg-emerald-500 text-white'
-                    : 'bg-amber-400 hover:bg-amber-300 text-slate-950'
-                }`}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer ${copiedMsme
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-amber-400 hover:bg-amber-300 text-slate-950'
+                  }`}
                 title="Copy Registration Number"
               >
                 {copiedMsme ? (
@@ -305,13 +322,12 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
       {/* ══════════════════════════════════════════
           SECTION 1: THE ESSENCE & MISSION
       ══════════════════════════════════════════ */}
-      <section className={`rounded-3xl p-6 sm:p-10 border shadow-lg space-y-8 transition-colors ${
-        isDark
-          ? 'bg-[#09090B] border-red-900/80 text-white'
-          : isSepia
+      <section className={`rounded-3xl p-6 sm:p-10 border shadow-lg space-y-8 transition-colors ${isDark
+        ? 'bg-[#09090B] border-red-900/80 text-white'
+        : isSepia
           ? 'bg-[#FAF5EE] border-amber-300 text-[#2B231B]'
           : 'bg-white border-slate-200/90 text-slate-900'
-      }`}>
+        }`}>
         <div className="border-b border-red-900/20 pb-6 space-y-2">
           <div className={`flex items-center space-x-2 text-xs font-bold uppercase tracking-wider ${isDark ? 'text-amber-400' : 'text-red-900'}`}>
             <Compass className="w-4 h-4 text-amber-600" />
@@ -342,16 +358,15 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
           </div>
 
           {/* Side Panel: Mission Manifesto */}
-          <div className={`lg:col-span-5 p-6 rounded-2xl border space-y-5 ${
-            isDark
-              ? 'bg-[#121214] border-red-900/60 text-white'
-              : 'bg-[#FAF8F5] border-amber-200 text-slate-900'
-          }`}>
+          <div className={`lg:col-span-5 p-6 rounded-2xl border space-y-5 ${isDark
+            ? 'bg-[#121214] border-red-900/60 text-white'
+            : 'bg-[#FAF8F5] border-amber-200 text-slate-900'
+            }`}>
             <div className="flex items-center space-x-2 text-amber-600">
               <Sparkles className="w-5 h-5 text-amber-500" />
               <h3 className="font-serif font-bold text-lg">Our Mission Manifesto</h3>
             </div>
-            
+
             <ul className="space-y-3.5 text-xs sm:text-sm">
               <li className="flex items-start gap-3">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
@@ -381,13 +396,12 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
       {/* ══════════════════════════════════════════
           SECTION 2: CORE PILLARS OF THE ARCHIVE
       ══════════════════════════════════════════ */}
-      <section className={`rounded-3xl p-6 sm:p-10 border shadow-lg space-y-8 transition-colors ${
-        isDark
-          ? 'bg-[#09090B] border-red-900/80 text-white'
-          : isSepia
+      <section className={`rounded-3xl p-6 sm:p-10 border shadow-lg space-y-8 transition-colors ${isDark
+        ? 'bg-[#09090B] border-red-900/80 text-white'
+        : isSepia
           ? 'bg-[#FAF5EE] border-amber-300 text-[#2B231B]'
           : 'bg-white border-slate-200/90 text-slate-900'
-      }`}>
+        }`}>
         <div className="border-b border-red-900/20 pb-6 space-y-2">
           <div className={`flex items-center space-x-2 text-xs font-bold uppercase tracking-wider ${isDark ? 'text-amber-400' : 'text-red-900'}`}>
             <Layers className="w-4 h-4 text-amber-600" />
@@ -405,13 +419,12 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
           {corePillars.map((pillar, idx) => {
             const Icon = pillar.icon;
             return (
-              <div 
+              <div
                 key={idx}
-                className={`p-6 rounded-2xl border transition-all space-y-3 ${
-                  isDark
-                    ? 'bg-[#121214] border-red-900/50 hover:border-amber-400/60'
-                    : 'bg-[#FAF8F5] border-amber-200/80 hover:border-amber-400 hover:shadow-md'
-                }`}
+                className={`p-6 rounded-2xl border transition-all space-y-3 ${isDark
+                  ? 'bg-[#121214] border-red-900/50 hover:border-amber-400/60'
+                  : 'bg-[#FAF8F5] border-amber-200/80 hover:border-amber-400 hover:shadow-md'
+                  }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="w-12 h-12 rounded-xl bg-red-950 text-amber-400 flex items-center justify-center border border-amber-500/30">
@@ -436,13 +449,12 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
       {/* ══════════════════════════════════════════
           SECTION 3: ARCHIVAL STANDARDS & ETHICS
       ══════════════════════════════════════════ */}
-      <section className={`rounded-3xl p-6 sm:p-10 border shadow-lg space-y-8 transition-colors ${
-        isDark
-          ? 'bg-[#09090B] border-red-900/80 text-white'
-          : isSepia
+      <section className={`rounded-3xl p-6 sm:p-10 border shadow-lg space-y-8 transition-colors ${isDark
+        ? 'bg-[#09090B] border-red-900/80 text-white'
+        : isSepia
           ? 'bg-[#FAF5EE] border-amber-300 text-[#2B231B]'
           : 'bg-white border-slate-200/90 text-slate-900'
-      }`}>
+        }`}>
         <div className="border-b border-red-900/20 pb-6 space-y-2">
           <div className={`flex items-center space-x-2 text-xs font-bold uppercase tracking-wider ${isDark ? 'text-amber-400' : 'text-red-900'}`}>
             <ShieldCheck className="w-4 h-4 text-amber-600" />
@@ -458,13 +470,12 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {archivalEthics.map((item, idx) => (
-            <div 
+            <div
               key={idx}
-              className={`p-5 rounded-2xl border space-y-2.5 ${
-                isDark
-                  ? 'bg-[#121214] border-red-900/40'
-                  : 'bg-[#FAF8F5] border-slate-200'
-              }`}
+              className={`p-5 rounded-2xl border space-y-2.5 ${isDark
+                ? 'bg-[#121214] border-red-900/40'
+                : 'bg-[#FAF8F5] border-slate-200'
+                }`}
             >
               <div className="w-8 h-8 rounded-lg bg-amber-400/20 text-amber-600 font-bold flex items-center justify-center text-xs font-mono">
                 0{idx + 1}
@@ -484,13 +495,12 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
           SECTION 4: PEOPLE BEHIND VOICE OF SUFISM
           (Profile Cards Only - Click to open Modal)
       ══════════════════════════════════════════ */}
-      <section className={`rounded-3xl p-6 sm:p-10 border shadow-lg space-y-8 transition-colors ${
-        isDark
-          ? 'bg-[#09090B] border-red-900/80 text-white'
-          : isSepia
+      <section className={`rounded-3xl p-6 sm:p-10 border shadow-lg space-y-8 transition-colors ${isDark
+        ? 'bg-[#09090B] border-red-900/80 text-white'
+        : isSepia
           ? 'bg-[#FAF5EE] border-amber-300 text-[#2B231B]'
           : 'bg-white border-slate-200/90 text-slate-900'
-      }`}>
+        }`}>
         <div className="border-b border-red-900/20 pb-6 space-y-2">
           <div className={`flex items-center space-x-2 text-xs font-bold uppercase tracking-wider ${isDark ? 'text-amber-400' : 'text-red-900'}`}>
             <Users className="w-4 h-4 text-amber-600" />
@@ -506,18 +516,17 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
 
         {/* ── Two Prominent Profile Cards ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-          
-          {/* Card 1: Sahil Amin (The Man Behind the Mission) */}
-          <div 
+
+          {/* Card 1: Bhat Sahil (The Man Behind the Mission) */}
+          <div
             role="button"
             tabIndex={0}
             onClick={() => { setSelectedProfile('sahil'); setActiveSahilTab('story'); }}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { setSelectedProfile('sahil'); setActiveSahilTab('story'); } }}
-            className={`group cursor-pointer rounded-2xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between space-y-6 text-left relative overflow-hidden ${
-              isDark
-                ? 'bg-[#121214] border-red-900/70 hover:border-amber-400 hover:shadow-2xl hover:shadow-amber-500/10'
-                : 'bg-[#FAF8F5] border-amber-200 hover:border-amber-400 hover:shadow-xl'
-            }`}
+            className={`group cursor-pointer rounded-2xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between space-y-6 text-left relative overflow-hidden ${isDark
+              ? 'bg-[#121214] border-red-900/70 hover:border-amber-400 hover:shadow-2xl hover:shadow-amber-500/10'
+              : 'bg-[#FAF8F5] border-amber-200 hover:border-amber-400 hover:shadow-xl'
+              }`}
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -535,7 +544,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                   {!sahilImgError ? (
                     <img
                       src="/sahil-amin.jpeg"
-                      alt="Sahil Amin"
+                      alt="Bhat Sahil"
                       onError={() => setSahilImgError(true)}
                       className="w-full h-full object-cover object-center"
                     />
@@ -545,25 +554,96 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className={`font-serif font-bold text-2xl group-hover:text-amber-600 transition-colors ${
-                    isDark ? 'text-white' : 'text-slate-950'
-                  }`}>
-                    Sahil Amin
+                  <h3 className={`font-serif font-bold text-2xl group-hover:text-amber-600 transition-colors ${isDark ? 'text-white' : 'text-slate-950'
+                    }`}>
+                    Bhat Sahil
                   </h3>
                   <p className="text-xs sm:text-sm font-bold text-amber-600">
                     Founder & Mission Director
                   </p>
                   <p className="text-xs text-slate-500">
-                    Srinagar, Jammu & Kashmir
+                    Kulgam, Jammu & Kashmir
                   </p>
                 </div>
               </div>
 
-              <p className={`text-xs sm:text-sm leading-relaxed ${
-                isDark ? 'text-slate-300' : 'text-slate-600'
-              }`}>
-                Deeply rooted in Kashmir's spiritual landscape, Sahil initiated Voice of Sufism after extensive field travels across all 20 districts to preserve dying oral lore, rare manuscripts, and shrine legacies into a perpetual living archive.
+              <p className={`text-xs sm:text-sm leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'
+                }`}>
+                Deeply rooted in Kashmir's spiritual landscape, Bhat Sahil initiated Voice of Sufism after extensive field travels across all 20 districts to preserve dying oral lore, rare manuscripts, and shrine legacies into a perpetual living archive.
               </p>
+
+              {/* Founder Social & Contact Badges */}
+              <div className="flex items-center flex-wrap gap-2 pt-1">
+                <a
+                  href="https://youtube.com/@voicesaahil1913?si=4Roj1J0HVJGrjLzX"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-2 rounded-xl bg-red-600/10 border border-red-600/30 text-red-600 hover:bg-red-600 hover:text-white transition-all hover:scale-105"
+                  title="YouTube Channel"
+                  aria-label="YouTube Channel"
+                >
+                  <YouTubeIcon className="w-3.5 h-3.5" />
+                </a>
+
+                <a
+                  href="https://www.instagram.com/voice_of_sufism?stkn=ZHg3cTBjcXpvZGJv"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-2 rounded-xl bg-pink-600/10 border border-pink-600/30 text-pink-600 hover:bg-pink-600 hover:text-white transition-all hover:scale-105"
+                  title="Instagram Page"
+                  aria-label="Instagram Page"
+                >
+                  <InstagramIcon className="w-3.5 h-3.5" />
+                </a>
+
+                <a
+                  href="https://www.facebook.com/share/1BgsXBbhqw/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-2 rounded-xl bg-[#1877F2]/10 border border-[#1877F2]/30 text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all hover:scale-105"
+                  title="Facebook Page"
+                  aria-label="Facebook Page"
+                >
+                  <FacebookIcon className="w-3.5 h-3.5" />
+                </a>
+
+                <a
+                  href="https://pin.it/46iHTerEz"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-2 rounded-xl bg-[#E60023]/10 border border-[#E60023]/30 text-[#E60023] hover:bg-[#E60023] hover:text-white transition-all hover:scale-105"
+                  title="Pinterest Gallery"
+                  aria-label="Pinterest Gallery"
+                >
+                  <PinterestIcon className="w-3.5 h-3.5" />
+                </a>
+
+                <a
+                  href="mailto:mohmmadaminbhat1@gmail.com"
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 hover:bg-amber-500 hover:text-slate-950 transition-all hover:scale-105"
+                  title="Direct Email (mohmmadaminbhat1@gmail.com)"
+                  aria-label="Direct Email"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                </a>
+
+                <a
+                  href="https://wa.me/919596154384"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-2 rounded-xl bg-emerald-600/10 border border-emerald-600/30 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all hover:scale-105"
+                  title="WhatsApp (+91 9596154384)"
+                  aria-label="WhatsApp Founder"
+                >
+                  <Phone className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
 
             <div className="pt-4 border-t border-amber-300/30 flex items-center justify-between">
@@ -582,16 +662,15 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
           </div>
 
           {/* Card 2: Saquib Nazeer (The Developer & Digital Architect) */}
-          <div 
+          <div
             role="button"
             tabIndex={0}
             onClick={() => setSelectedProfile('saquib')}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setSelectedProfile('saquib'); }}
-            className={`group cursor-pointer rounded-2xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between space-y-5 text-left relative overflow-hidden ${
-              isDark
-                ? 'bg-[#121214] border-red-900/70 hover:border-amber-400 hover:shadow-2xl hover:shadow-amber-500/10'
-                : 'bg-[#FAF8F5] border-amber-200 hover:border-amber-400 hover:shadow-xl'
-            }`}
+            className={`group cursor-pointer rounded-2xl p-6 sm:p-7 border-2 transition-all duration-300 flex flex-col justify-between space-y-5 text-left relative overflow-hidden ${isDark
+              ? 'bg-[#121214] border-red-900/70 hover:border-amber-400 hover:shadow-2xl hover:shadow-amber-500/10'
+              : 'bg-[#FAF8F5] border-amber-200 hover:border-amber-400 hover:shadow-xl'
+              }`}
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -619,24 +698,22 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                 </div>
 
                 <div className="space-y-1">
-                  <h3 className={`font-serif font-bold text-2xl group-hover:text-amber-600 transition-colors ${
-                    isDark ? 'text-white' : 'text-slate-950'
-                  }`}>
+                  <h3 className={`font-serif font-bold text-2xl group-hover:text-amber-600 transition-colors ${isDark ? 'text-white' : 'text-slate-950'
+                    }`}>
                     Saquib Nazeer
                   </h3>
                   <p className="text-xs sm:text-sm font-bold text-amber-600">
                     Full-Stack Developer & AI Engineer
                   </p>
                   <p className="text-xs text-slate-500">
-                    Srinagar, Jammu & Kashmir
+                    Kulgam, Jammu & Kashmir
                   </p>
                 </div>
               </div>
 
               {/* Concise Description */}
-              <p className={`text-xs sm:text-sm leading-relaxed ${
-                isDark ? 'text-slate-300' : 'text-slate-600'
-              }`}>
+              <p className={`text-xs sm:text-sm leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'
+                }`}>
                 Full-Stack Developer & AI Engineer specializing in scalable web systems, computer vision, and modern intelligent UI/UX.
               </p>
 
@@ -645,11 +722,10 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                 {['Web Apps', 'Apps', 'Websites', 'Software Systems', 'ChatBots', 'Automations'].map((svc, i) => (
                   <span
                     key={i}
-                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${
-                      isDark
-                        ? 'bg-white/5 border-white/10 text-amber-300/90'
-                        : 'bg-amber-500/10 border-amber-300 text-amber-900'
-                    }`}
+                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${isDark
+                      ? 'bg-white/5 border-white/10 text-amber-300/90'
+                      : 'bg-amber-500/10 border-amber-300 text-amber-900'
+                      }`}
                   >
                     {svc}
                   </span>
@@ -675,9 +751,8 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className={`p-2.5 rounded-xl border transition-all hover:scale-105 ${
-                    isDark ? 'bg-white/5 border-white/10 hover:bg-white/15 text-white' : 'bg-slate-100 border-slate-200 hover:bg-slate-200 text-slate-800'
-                  }`}
+                  className={`p-2.5 rounded-xl border transition-all hover:scale-105 ${isDark ? 'bg-white/5 border-white/10 hover:bg-white/15 text-white' : 'bg-slate-100 border-slate-200 hover:bg-slate-200 text-slate-800'
+                    }`}
                   title="GitHub Profile (@SaquibNazeer01)"
                   aria-label="GitHub Profile"
                 >
@@ -711,9 +786,8 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                 <a
                   href="mailto:bhatsaakib505@gmail.com"
                   onClick={(e) => e.stopPropagation()}
-                  className={`p-2.5 rounded-xl border transition-all hover:scale-105 ${
-                    isDark ? 'bg-white/5 border-white/10 hover:bg-white/15 text-amber-400' : 'bg-slate-100 border-slate-200 hover:bg-slate-200 text-amber-700'
-                  }`}
+                  className={`p-2.5 rounded-xl border transition-all hover:scale-105 ${isDark ? 'bg-white/5 border-white/10 hover:bg-white/15 text-amber-400' : 'bg-slate-100 border-slate-200 hover:bg-slate-200 text-amber-700'
+                    }`}
                   title="Email: bhatsaakib505@gmail.com"
                   aria-label="Email Developer"
                 >
@@ -757,38 +831,36 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
           so they are NEVER trapped in parent stacking contexts)
       ════════════════════════════════════════════════════════════ */}
       {selectedProfile && typeof document !== 'undefined' && createPortal(
-        <div 
+        <div
           className="fixed inset-0 z-[99999] overflow-y-auto bg-black/85 backdrop-blur-md flex items-start justify-center p-3 sm:p-6 sm:py-8 animate-fadeIn"
           onClick={() => setSelectedProfile(null)}
         >
           {/* Modal Box */}
-          <div 
+          <div
             className={`relative w-full max-w-4xl my-auto sm:my-4 rounded-2xl sm:rounded-3xl shadow-2xl border-2 overflow-hidden flex flex-col ${modalBg}`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* ── Sticky Top Bar with Back, Title & Close ── */}
-            <div className={`sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 py-3.5 border-b backdrop-blur-xl ${
-              isDark ? 'bg-[#0E0E12]/95 border-red-900/60' : isSepia ? 'bg-[#FAF5EE]/95 border-amber-300/80' : 'bg-white/95 border-slate-200'
-            }`}>
+            <div className={`sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 py-3.5 border-b backdrop-blur-xl ${isDark ? 'bg-[#0E0E12]/95 border-red-900/60' : isSepia ? 'bg-[#FAF5EE]/95 border-amber-300/80' : 'bg-white/95 border-slate-200'
+              }`}>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={() => setSelectedProfile(null)}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs transition-colors cursor-pointer shadow-xs"
                 >
-                  <span>← Back to About</span>
+                  <span>← Go Back</span>
                 </button>
                 <span className={`text-xs sm:text-sm font-bold font-serif truncate max-w-[160px] sm:max-w-none ${isDark ? 'text-amber-300' : 'text-slate-900'}`}>
-                  {selectedProfile === 'sahil' ? 'Sahil Amin — Founder Profile' : 'Saquib Nazeer — Developer Profile'}
+                  {selectedProfile === 'sahil' ? 'Founder Profile' : 'Developer Profile'}
                 </span>
               </div>
 
               <button
                 type="button"
                 onClick={() => setSelectedProfile(null)}
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
-                  isDark ? 'bg-white/10 hover:bg-red-600 text-white' : 'bg-slate-100 hover:bg-red-600 hover:text-white text-slate-700'
-                }`}
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors cursor-pointer ${isDark ? 'bg-white/10 hover:bg-red-600 text-white' : 'bg-slate-100 hover:bg-red-600 hover:text-white text-slate-700'
+                  }`}
                 title="Close Window"
               >
                 <X className="w-4 h-4" />
@@ -799,7 +871,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
             <div className="p-5 sm:p-8 space-y-6">
 
               {/* ══════════════════════════════════════════
-                  SAHIL AMIN PROFILE CONTENT
+                  BHAT SAHIL PROFILE CONTENT
               ══════════════════════════════════════════ */}
               {selectedProfile === 'sahil' && (
                 <div className="space-y-6">
@@ -809,7 +881,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                       {!sahilImgError ? (
                         <img
                           src="/sahil-amin.jpeg"
-                          alt="Sahil Amin"
+                          alt="Bhat Sahil"
                           onError={() => setSahilImgError(true)}
                           className="w-full h-full object-cover object-center"
                         />
@@ -829,14 +901,14 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                       </div>
 
                       <h2 className={`font-serif text-2xl sm:text-4xl font-extrabold ${modalTextMain}`}>
-                        Sahil Amin
+                        Bhat Sahil
                       </h2>
                       <p className="text-sm sm:text-base font-bold text-amber-600">
                         Founder & Mission Director — Voice of Sufism (صداۓ تصوف)
                       </p>
                       <p className={`text-xs ${modalTextMuted} flex items-center justify-center sm:justify-start gap-1`}>
                         <MapPin className="w-3.5 h-3.5 text-red-600 flex-shrink-0" />
-                        <span>Srinagar, Jammu & Kashmir • Valley-Wide Cultural Repository</span>
+                        <span>Kulgam, Jammu & Kashmir • Valley-Wide Cultural Repository</span>
                       </p>
                     </div>
                   </div>
@@ -856,11 +928,10 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                           key={tab.id}
                           type="button"
                           onClick={() => setActiveSahilTab(tab.id as any)}
-                          className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                            isActive
-                              ? 'bg-amber-400 text-slate-950 shadow-sm'
-                              : `${modalSubCardBg} ${modalTextMuted} hover:bg-amber-100 hover:text-slate-950`
-                          }`}
+                          className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${isActive
+                            ? 'bg-amber-400 text-slate-950 shadow-sm'
+                            : `${modalSubCardBg} ${modalTextMuted} hover:bg-amber-100 hover:text-slate-950`
+                            }`}
                         >
                           <TabIcon className="w-3.5 h-3.5" />
                           <span>{tab.label}</span>
@@ -876,13 +947,13 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                         The Sacred Calling: Why Voice of Sufism was Born
                       </h4>
                       <p className={modalTextMuted}>
-                        Born and raised in Srinagar amidst Kashmir’s historic Khanqahs and tranquil shrine courtyards, <strong>Sahil Amin</strong> developed an early, profound reverence for the Valley's mystical geometry. He grew up hearing elder villagers recite profound Kashmiri Vakhs and Shruks from memory—verses that carried centuries of moral wisdom, universal brotherhood, and ecological harmony.
+                        Born and raised in Kulgam amidst Kashmir’s historic Khanqahs and tranquil shrine courtyards, <strong>Bhat Sahil</strong> developed an early, profound reverence for the Valley's mystical geometry. He grew up hearing elder villagers recite profound Kashmiri Vakhs and Shruks from memory—verses that carried centuries of moral wisdom, universal brotherhood, and ecological harmony.
                       </p>
                       <p className={modalTextMuted}>
-                        However, with modern rapid urbanization and digital media, Sahil observed a tragic trend: the younger generation was rapidly becoming disconnected from Kashmir’s indigenous spiritual heritage. Ancient hand-copied manuscripts in private houses were deteriorating; sacred Ziyarats across rural districts remained unmapped and unrecorded; and many oral folklore tales preserved only by elderly custodians were vanishing with every passing year.
+                        However, with modern rapid urbanization and digital media, Bhat Sahil observed a tragic trend: the younger generation was rapidly becoming disconnected from Kashmir’s indigenous spiritual heritage. Ancient hand-copied manuscripts in private houses were deteriorating; sacred Ziyarats across rural districts remained unmapped and unrecorded; and many oral folklore tales preserved only by elderly custodians were vanishing with every passing year.
                       </p>
                       <p className={modalTextMuted}>
-                        Driven by a resolute personal calling, Sahil set out to create <strong>Voice of Sufism (صداۓ تصوف)</strong>—not as a commercial entity, but as a permanent, open-access, authoritative digital sanctuary. His vision was clear: to collect, translate, and verify Kashmir's mystical treasures using contemporary digital standards while preserving their sacred sanctity.
+                        Driven by a resolute personal calling, Bhat Sahil set out to create <strong>Voice of Sufism (صداۓ تصوف)</strong>—not as a commercial entity, but as a permanent, open-access, authoritative digital sanctuary. His vision was clear: to collect, translate, and verify Kashmir's mystical treasures using contemporary digital standards while preserving their sacred sanctity.
                       </p>
 
                       <div className="p-6 rounded-2xl bg-gradient-to-r from-red-950 via-[#450A0A] to-slate-950 text-amber-100 border border-amber-400/40 space-y-3 shadow-lg mt-4">
@@ -891,7 +962,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                           "Preserving the oral history, mystical poetry, and sacred shrines of Kashmir is not just preserving our past—it is lighting a lamp of harmony and self-realization for future generations."
                         </p>
                         <p className="text-xs text-amber-400 font-bold uppercase tracking-wider text-right">
-                          — Sahil Amin (Founder & Mission Director)
+                          — Bhat Sahil (Founder & Mission Director)
                         </p>
                       </div>
                     </div>
@@ -901,7 +972,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                   {activeSahilTab === 'initiatives' && (
                     <div className="space-y-5 text-sm leading-relaxed animate-fadeIn">
                       <h4 className={`font-serif font-bold text-lg ${modalTextMain}`}>
-                        Groundwork & Key Initiatives Led by Sahil
+                        Groundwork & Key Initiatives Led by Bhat Sahil
                       </h4>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -936,7 +1007,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                         </div>
 
                         <div className={`p-4 rounded-2xl border space-y-2 ${modalSubCardBg}`}>
-                          <div className="flex items-center gap-2 font-serif font-bold text-sm text-amber-600">
+                          <div className="flex items-center gap-2 font-serif font-bold text-sm text-emerald-600">
                             <ShieldCheck className="w-4 h-4 text-emerald-600" />
                             <span>Government Accreditation</span>
                           </div>
@@ -955,7 +1026,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                         The Reshi Philosophy & Kashmiriyat
                       </h4>
                       <p className={modalTextMuted}>
-                        Sahil believes that Kashmir's deepest cultural strength is its historical synthesis. The Reshi movement, founded by Sheikh-ul-Alam (Nund Reshi) and enriched by Lal Ded, taught non-violence towards all living creatures, self-abnegation, respect for nature, and spiritual communion that embraced all people regardless of creed.
+                        Bhat Sahil believes that Kashmir's deepest cultural strength is its historical synthesis. The Reshi movement, founded by Sheikh-ul-Alam (Nund Reshi) and enriched by Lal Ded, taught non-violence towards all living creatures, self-abnegation, respect for nature, and spiritual communion that embraced all people regardless of creed.
                       </p>
                       <p className={modalTextMuted}>
                         <em>"Our elders taught that the real shrine is not made of stone or timber alone; it is the inner sanctuary of the human heart purified by love and remembrance. Voice of Sufism exists to remind us of this supreme heritage."</em>
@@ -963,7 +1034,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
 
                       <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-400/40 space-y-2">
                         <p className={`font-serif font-bold text-sm ${isDark ? 'text-amber-300' : 'text-amber-900'}`}>
-                          Core Principles Upheld by Sahil Amin:
+                          Core Principles Upheld by Bhat Sahil:
                         </p>
                         <ul className={`space-y-1.5 text-xs ${modalTextMuted}`}>
                           <li className="flex items-center gap-2">
@@ -990,36 +1061,106 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                         Connect Directly with the Founder
                       </h4>
                       <p className={`text-xs sm:text-sm ${modalTextMuted}`}>
-                        Scholars, researchers, shrine custodians, or cultural institutions wishing to collaborate, contribute manuscripts, or support the digital preservation initiative can reach Sahil Amin directly:
+                        Scholars, researchers, shrine custodians, or cultural institutions wishing to collaborate, contribute manuscripts, or support the digital preservation initiative can reach Bhat Sahil directly through any of his official channels:
                       </p>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                         <a
-                          href="mailto:saahilahbhat1@gmail.com"
-                          className={`p-4 rounded-2xl border hover:border-amber-400 transition-colors flex items-center gap-3 group ${modalSubCardBg}`}
+                          href="mailto:mohmmadaminbhat1@gmail.com"
+                          className={`p-4 rounded-2xl border hover:border-amber-400 transition-all flex items-center gap-3 group ${modalSubCardBg}`}
                         >
-                          <div className="w-10 h-10 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center font-bold flex-shrink-0">
+                          <div className="w-10 h-10 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center font-bold flex-shrink-0 group-hover:scale-105 transition-transform">
                             <Mail className="w-5 h-5" />
                           </div>
                           <div>
                             <span className="text-[10px] uppercase font-bold text-slate-500 block">Direct Email</span>
                             <span className="text-xs font-bold group-hover:text-amber-500 transition-colors">
-                              saahilahbhat1@gmail.com
+                              mohmmadaminbhat1@gmail.com
                             </span>
                           </div>
                         </a>
 
                         <a
-                          href="tel:+919596154384"
-                          className={`p-4 rounded-2xl border hover:border-amber-400 transition-colors flex items-center gap-3 group ${modalSubCardBg}`}
+                          href="https://wa.me/919596154384"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`p-4 rounded-2xl border hover:border-emerald-400 transition-all flex items-center gap-3 group ${modalSubCardBg}`}
                         >
-                          <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold flex-shrink-0">
+                          <div className="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold flex-shrink-0 group-hover:scale-105 transition-transform">
                             <Phone className="w-5 h-5" />
                           </div>
                           <div>
                             <span className="text-[10px] uppercase font-bold text-slate-500 block">Phone & WhatsApp</span>
                             <span className="text-xs font-bold group-hover:text-emerald-400 transition-colors">
                               +91 9596154384
+                            </span>
+                          </div>
+                        </a>
+
+                        <a
+                          href="https://youtube.com/@voicesaahil1913?si=4Roj1J0HVJGrjLzX"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`p-4 rounded-2xl border hover:border-red-500 transition-all flex items-center gap-3 group ${modalSubCardBg}`}
+                        >
+                          <div className="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center font-bold flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <YouTubeIcon className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <span className="text-[10px] uppercase font-bold text-slate-500 block">YouTube Channel</span>
+                            <span className="text-xs font-bold group-hover:text-red-500 transition-colors">
+                              @voicesaahil1913
+                            </span>
+                          </div>
+                        </a>
+
+                        <a
+                          href="https://www.instagram.com/voice_of_sufism?stkn=ZHg3cTBjcXpvZGJv"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`p-4 rounded-2xl border hover:border-pink-500 transition-all flex items-center gap-3 group ${modalSubCardBg}`}
+                        >
+                          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center font-bold flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <InstagramIcon className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <span className="text-[10px] uppercase font-bold text-slate-500 block">Instagram</span>
+                            <span className="text-xs font-bold group-hover:text-pink-500 transition-colors">
+                              @voice_of_sufism
+                            </span>
+                          </div>
+                        </a>
+
+                        <a
+                          href="https://www.facebook.com/share/1BgsXBbhqw/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`p-4 rounded-2xl border hover:border-blue-500 transition-all flex items-center gap-3 group ${modalSubCardBg}`}
+                        >
+                          <div className="w-10 h-10 rounded-xl bg-[#1877F2] text-white flex items-center justify-center font-bold flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <FacebookIcon className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <span className="text-[10px] uppercase font-bold text-slate-500 block">Facebook</span>
+                            <span className="text-xs font-bold group-hover:text-blue-500 transition-colors">
+                              Voice of Sufism Page
+                            </span>
+                          </div>
+                        </a>
+
+                        <a
+                          href="https://pin.it/46iHTerEz"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`p-4 rounded-2xl border hover:border-red-600 transition-all flex items-center gap-3 group ${modalSubCardBg}`}
+                        >
+                          <div className="w-10 h-10 rounded-xl bg-[#E60023] text-white flex items-center justify-center font-bold flex-shrink-0 group-hover:scale-105 transition-transform">
+                            <PinterestIcon className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <span className="text-[10px] uppercase font-bold text-slate-500 block">Pinterest</span>
+                            <span className="text-xs font-bold group-hover:text-red-500 transition-colors">
+                              Voice of Sufism Board
                             </span>
                           </div>
                         </a>
@@ -1072,7 +1213,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                       </p>
                       <p className={`text-xs ${modalTextMuted} flex items-center justify-center sm:justify-start gap-1`}>
                         <MapPin className="w-3.5 h-3.5 text-red-600 flex-shrink-0" />
-                        <span>Srinagar, Jammu & Kashmir</span>
+                        <span>Kulgam, Jammu & Kashmir</span>
                       </p>
 
                       {/* Social and Contact Links as Logos/Icons */}
@@ -1094,9 +1235,8 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                           href="https://github.com/SaquibNazeer01"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className={`p-2.5 rounded-xl border transition-all hover:scale-105 ${
-                            isDark ? 'bg-white/5 border-white/10 hover:bg-white/15 text-white' : 'bg-white border-slate-200 hover:bg-slate-100 text-slate-900'
-                          }`}
+                          className={`p-2.5 rounded-xl border transition-all hover:scale-105 ${isDark ? 'bg-white/5 border-white/10 hover:bg-white/15 text-white' : 'bg-white border-slate-200 hover:bg-slate-100 text-slate-900'
+                            }`}
                           title="GitHub Profile (@SaquibNazeer01)"
                           aria-label="GitHub Profile"
                         >
@@ -1105,7 +1245,7 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
 
                         {/* LinkedIn */}
                         <a
-                          href="https://www.linkedin.com/in/saquib-nazeer-2b3043326"
+                          href="https://www.linkedin.com/in/saquibnazeer01"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-2.5 rounded-xl bg-[#0077b5]/10 border border-[#0077b5]/30 hover:bg-[#0077b5] text-[#0077b5] hover:text-white transition-all hover:scale-105"
@@ -1130,9 +1270,8 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                         {/* Email */}
                         <a
                           href="mailto:bhatsaakib505@gmail.com"
-                          className={`p-2.5 rounded-xl border transition-all hover:scale-105 ${
-                            isDark ? 'bg-white/5 border-white/10 hover:bg-white/15 text-amber-400' : 'bg-white border-slate-200 hover:bg-slate-100 text-amber-600'
-                          }`}
+                          className={`p-2.5 rounded-xl border transition-all hover:scale-105 ${isDark ? 'bg-white/5 border-white/10 hover:bg-white/15 text-amber-400' : 'bg-white border-slate-200 hover:bg-slate-100 text-amber-600'
+                            }`}
                           title="Email: bhatsaakib505@gmail.com"
                           aria-label="Email Saquib"
                         >
@@ -1213,9 +1352,8 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
             </div>
 
             {/* ── Modal Bottom Action Bar ── */}
-            <div className={`p-4 sm:px-6 border-t flex flex-col sm:flex-row items-center justify-between gap-3 ${
-              isDark ? 'bg-[#0A0A0D] border-red-900/60' : isSepia ? 'bg-[#FAF5EE] border-amber-300/80' : 'bg-slate-50 border-slate-200'
-            }`}>
+            <div className={`p-4 sm:px-6 border-t flex flex-col sm:flex-row items-center justify-between gap-3 ${isDark ? 'bg-[#0A0A0D] border-red-900/60' : isSepia ? 'bg-[#FAF5EE] border-amber-300/80' : 'bg-slate-50 border-slate-200'
+              }`}>
               {selectedProfile === 'saquib' ? (
                 <a
                   href="https://saquibb.me"
@@ -1229,20 +1367,19 @@ export const AboutUs: React.FC<AboutUsProps> = ({ themeMode = 'ivory' }) => {
                 </a>
               ) : (
                 <a
-                  href="mailto:saahilahbhat1@gmail.com"
+                  href="mailto:mohmmadaminbhat1@gmail.com"
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-extrabold shadow-md transition-all cursor-pointer w-full sm:w-auto justify-center"
                 >
                   <Mail className="w-4 h-4" />
-                  <span>Contact Founder: saahilahbhat1@gmail.com</span>
+                  <span>Contact Founder: mohmmadaminbhat1@gmail.com</span>
                 </a>
               )}
 
               <button
                 type="button"
                 onClick={() => setSelectedProfile(null)}
-                className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-colors cursor-pointer w-full sm:w-auto ${
-                  isDark ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-slate-900 text-white hover:bg-slate-800'
-                }`}
+                className={`px-6 py-2.5 rounded-xl text-xs font-bold transition-colors cursor-pointer w-full sm:w-auto ${isDark ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-slate-900 text-white hover:bg-slate-800'
+                  }`}
               >
                 Close Profile
               </button>

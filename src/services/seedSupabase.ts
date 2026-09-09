@@ -202,7 +202,7 @@ export async function seedSupabaseDatabase(): Promise<SeedResult> {
       tagline: 'Preserving the Spiritual Heritage of Kashmir',
       meta_description: 'Voice of Sufism — an independent digital archive documenting Kashmiri Sufi traditions, sacred shrines, oral histories, and mystical poetry.',
       contact_email: 'admin@voiceofsufism.org',
-      editorial_board: 'Sahil Amin (Founder), Saquib Nazeer (Developer)',
+      editorial_board: 'Bhat Sahil (Founder), Saquib Nazeer (Developer)',
       maintenance_mode: false,
       enable_ambient_audio: false,
       allow_public_submissions: true,

@@ -17,12 +17,26 @@ const AUTHORIZED_ADMIN_DIGESTS: Record<string, { hash: string; user: CmsUser }> 
       districtLocation: 'Srinagar'
     }
   },
+  'mohmmadaminbhat1@gmail.com': {
+    hash: 'd3b3d01778cc3bd5a294015147ca56d91929e43d05638f955aefaf8451ac961a',
+    user: {
+      id: 'admin-sahil',
+      name: 'Bhat Sahil',
+      email: 'mohmmadaminbhat1@gmail.com',
+      role: 'Super Admin',
+      status: 'Active',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+      contributionsCount: 28,
+      lastLogin: 'Active Now',
+      districtLocation: 'Srinagar'
+    }
+  },
   'saahilahbhat1@gmail.com': {
     hash: 'd3b3d01778cc3bd5a294015147ca56d91929e43d05638f955aefaf8451ac961a',
     user: {
       id: 'admin-sahil',
-      name: 'Sahil Amin',
-      email: 'saahilahbhat1@gmail.com',
+      name: 'Bhat Sahil',
+      email: 'mohmmadaminbhat1@gmail.com',
       role: 'Super Admin',
       status: 'Active',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',

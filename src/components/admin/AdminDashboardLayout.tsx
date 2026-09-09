@@ -865,7 +865,7 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
               </div>
               <div className="min-w-0">
                 <p className="font-bold text-slate-100 group-hover:text-amber-300 transition-colors truncate">
-                  {currentUser?.name || 'Sahil Amin'}
+                  {currentUser?.name || 'Bhat Sahil'}
                 </p>
                 <p className="text-[10px] text-slate-400 truncate flex items-center space-x-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
@@ -995,7 +995,7 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
                 {getInitials(currentUser?.name)}
               </div>
               <div className="text-left hidden sm:block">
-                <span className="text-xs font-bold text-slate-900 block leading-tight">{currentUser?.name || 'Sahil Amin'}</span>
+                <span className="text-xs font-bold text-slate-900 block leading-tight">{currentUser?.name || 'Bhat Sahil'}</span>
                 <span className="text-[10px] text-emerald-700 font-semibold">{currentUser?.role || 'Super Admin'}</span>
               </div>
             </button>

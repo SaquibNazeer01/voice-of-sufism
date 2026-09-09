@@ -38,9 +38,10 @@ From the 14th-century verses of **Lal Ded** (*Vakhs*) and **Hazrat Sheikh Noor-u
 
 ## 👥 Leadership & Development Team
 
-- **Sahil Amin** — *Founder, Editor-in-Chief & Mission Director*
+- **Bhat Sahil** — *Founder, Editor-in-Chief & Mission Director*
   - Kashmir Cultural Heritage Researcher & Field Documentarian
-  - Email: `saahilahbhat1@gmail.com` | WhatsApp: `+91 9596154384`
+  - Email: `mohmmadaminbhat1@gmail.com` | WhatsApp: `+91 9596154384`
+  - YouTube: [Voice of Sufism](https://youtube.com/@voicesaahil1913?si=4Roj1J0HVJGrjLzX) | Instagram: [@voice_of_sufism](https://www.instagram.com/voice_of_sufism?stkn=ZHg3cTBjcXpvZGJv) | Facebook: [Voice of Sufism](https://www.facebook.com/share/1BgsXBbhqw/) | Pinterest: [Voice of Sufism](https://pin.it/46iHTerEz)
 
 - **Saquib Nazeer** — *Lead Software Engineer & UI/UX Architect*
   - Full-Stack Web & Mobile App Developer, Custom Software Systems

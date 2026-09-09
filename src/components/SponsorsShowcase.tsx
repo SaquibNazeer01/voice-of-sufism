@@ -235,7 +235,7 @@ export const SponsorsShowcase: React.FC<SponsorsShowcaseProps> = ({ themeMode = 
             <ArrowRight className="w-4 h-4" />
           </a>
           <a
-            href="mailto:saahilahbhat1@gmail.com"
+            href="mailto:mohmmadaminbhat1@gmail.com"
             className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-red-900/60 hover:bg-red-900 text-white font-bold text-xs border border-amber-400/40 flex items-center justify-center space-x-2 transition-colors"
           >
             <Mail className="w-4 h-4 text-amber-400" />

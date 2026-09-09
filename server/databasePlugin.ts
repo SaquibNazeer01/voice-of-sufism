@@ -42,7 +42,7 @@ const DEFAULT_DB: DatabaseSchema = {
   users: [
     {
       id: 'user-admin-1',
-      name: 'Sahil Amin',
+      name: 'Bhat Sahil',
       email: 'admin@voiceofsufism.org',
       role: 'Super Admin',
       status: 'Active',

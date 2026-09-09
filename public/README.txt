@@ -6,7 +6,7 @@ Paste your image files directly inside this "public" folder:
    File name: logo.png
    Full path: c:\Projects\voice-of-sufism\public\logo.png
 
-2. Founder (Sahil Amin) Profile Picture:
+2. Founder (Bhat Sahil) Profile Picture:
    File name: sahil_amin.jpg
    Full path: c:\Projects\voice-of-sufism\public\sahil_amin.jpg
 
