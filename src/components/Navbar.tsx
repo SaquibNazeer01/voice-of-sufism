@@ -128,11 +128,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Search */}
             <button
               onClick={onOpenSearch}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all border border-white/[0.06] text-[13px] font-ui font-medium"
-              aria-label="Search"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 hover:border-amber-400/40 transition-all border border-white/[0.1] text-[13px] font-ui font-medium group"
+              aria-label="Search Voice of Sufism"
+              title="Search shrines, saints, poetry, or articles (Ctrl+K)"
             >
-              <Search className="w-4 h-4" />
-              <span className="hidden xl:inline text-xs">Search</span>
+              <Search className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+              <span className="hidden sm:inline text-xs">Search</span>
+              <kbd className="hidden md:inline-block px-1.5 py-0.5 text-[9px] font-ui font-semibold text-slate-400 bg-white/5 border border-white/10 rounded group-hover:text-amber-300 group-hover:border-amber-400/30">
+                Ctrl K
+              </kbd>
             </button>
 
             {/* Bookmarks */}

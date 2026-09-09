@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Article, CategoryType, DistrictRegion } from './types';
+import { Article, CategoryType, DistrictRegion, HeritageSite } from './types';
 import { SiteSettings, CmsUser } from './types/cms';
 import { SupabaseService } from './services/supabaseService';
 import { isSupabaseConfigured } from './lib/supabaseClient';
@@ -21,6 +21,9 @@ import { AdminLogin } from './components/admin/AdminLogin';
 import { AdminDashboardLayout } from './components/admin/AdminDashboardLayout';
 import { AppearanceToggleModal, ThemeMode, FontSize, FontFamily } from './components/AppearanceToggleModal';
 import { SufiChatbotWidget } from './components/SufiChatbotWidget';
+import { GlobalSearchModal } from './components/GlobalSearchModal';
+import { ZiyaratDetailModal } from './components/ZiyaratDetailModal';
+import { HERITAGE_SITES_DATA } from './data/heritageSites';
 import { Search, X, Compass, BookOpen, Feather, Filter, ShieldCheck, Sliders } from 'lucide-react';
 import { parseArticleSlugFromHash, findArticleBySlug, generateSlug } from './lib/shareUtils';
 
@@ -182,6 +185,19 @@ export default function App() {
 
   const [isBookmarksOpen, setIsBookmarksOpen] = useState<boolean>(false);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
+  const [selectedZiyaratForModal, setSelectedZiyaratForModal] = useState<HeritageSite | null>(null);
+
+  // Global Ctrl + K / Cmd + K shortcut to toggle search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsSearchModalOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Sync bookmarks to localStorage
   useEffect(() => {
@@ -528,54 +544,28 @@ export default function App() {
         onClearAll={handleClearAllBookmarks}
       />
 
-      {/* Global Quick Search Modal */}
-      {isSearchModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-start justify-center pt-20 p-4 animate-fadeIn">
-          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200 space-y-4 p-6">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-              <div className="flex items-center space-x-2 text-slate-800">
-                <Search className="w-5 h-5 text-red-900" />
-                <span className="font-serif font-bold text-lg">Search Voice of Sufism</span>
-              </div>
-              <button
-                onClick={() => setIsSearchModalOpen(false)}
-                className="p-1.5 rounded-lg bg-slate-100 text-slate-500 hover:text-slate-900"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+      {/* Universal Omni-Search Modal with Suggested Searches & Filter Categories */}
+      <GlobalSearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+        articles={articles}
+        onReadArticle={openArticle}
+        onOpenZiyarat={(site) => setSelectedZiyaratForModal(site)}
+        onSelectTab={(tab) => {
+          setActiveTab(tab);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        themeMode={globalTheme}
+      />
 
-            <input
-              type="text"
-              autoFocus
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by saint name, shrine, district, or poem title..."
-              className="w-full p-3.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-red-700 bg-slate-50 text-slate-900"
-            />
-
-            <div className="max-h-80 overflow-y-auto space-y-2 pt-2">
-              {filteredArticles.slice(0, 5).map((art) => (
-                <div
-                  key={art.id}
-                  onClick={() => {
-                    openArticle(art);
-                    setIsSearchModalOpen(false);
-                  }}
-                  className="p-3.5 rounded-xl hover:bg-red-50 cursor-pointer border border-transparent hover:border-red-200 transition-colors flex items-center justify-between"
-                >
-                  <div>
-                    <p className="text-[10px] font-bold text-red-900 uppercase">{art.category}</p>
-                    <p className="font-serif font-bold text-sm text-slate-900">{art.title}</p>
-                    <p className="text-xs text-slate-500">{art.locationName}</p>
-                  </div>
-                  <span className="text-xs font-bold text-red-900">Read</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Global Interactive Ziyarat Detailed Story Modal */}
+      <ZiyaratDetailModal
+        site={selectedZiyaratForModal}
+        isOpen={Boolean(selectedZiyaratForModal)}
+        onClose={() => setSelectedZiyaratForModal(null)}
+        allSites={HERITAGE_SITES_DATA}
+        onSelectSite={(site) => setSelectedZiyaratForModal(site)}
+      />
 
       {/* Footer */}
       <Footer

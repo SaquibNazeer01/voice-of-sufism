@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PoemVerse } from '../types';
 import { SupabaseService } from '../services/supabaseService';
+import { POEMS_DATA } from '../data/poems';
 import { Feather, Volume2, VolumeX, Copy, Check, BookOpen, Search, Share2 } from 'lucide-react';
 
 export const PoetryTreasury: React.FC = () => {
@@ -14,10 +15,10 @@ export const PoetryTreasury: React.FC = () => {
   useEffect(() => {
     setIsLoading(true);
     SupabaseService.getPoems().then(data => {
-      setPoems(data || []);
+      setPoems(data && data.length > 0 ? data : POEMS_DATA);
       setIsLoading(false);
     }).catch(() => {
-      setPoems([]);
+      setPoems(POEMS_DATA);
       setIsLoading(false);
     });
   }, []);

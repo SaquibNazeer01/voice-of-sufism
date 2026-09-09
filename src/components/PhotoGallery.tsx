@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PhotoGalleryItem, CategoryType } from '../types';
 import { SupabaseService } from '../services/supabaseService';
+import { PHOTO_GALLERY_DATA } from '../data/galleries';
 import { Image as ImageIcon, MapPin, Maximize2, X, Camera } from 'lucide-react';
 
 export const PhotoGallery: React.FC = () => {
@@ -12,10 +13,10 @@ export const PhotoGallery: React.FC = () => {
   useEffect(() => {
     setIsLoading(true);
     SupabaseService.getPhotos().then(data => {
-      setPhotos(data || []);
+      setPhotos(data && data.length > 0 ? data : PHOTO_GALLERY_DATA);
       setIsLoading(false);
     }).catch(() => {
-      setPhotos([]);
+      setPhotos(PHOTO_GALLERY_DATA);
       setIsLoading(false);
     });
   }, []);

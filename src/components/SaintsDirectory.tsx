@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SufiSaint } from '../types';
 import { SupabaseService } from '../services/supabaseService';
+import { SAINTS_DATA } from '../data/saints';
 import {
   Compass, MapPin, Feather, X, BookOpen, Heart, ArrowRight, ChevronLeft
 } from 'lucide-react';
@@ -207,11 +208,11 @@ export const SaintsDirectory: React.FC = () => {
     setIsLoading(true);
     SupabaseService.getSaints()
       .then(data => {
-        setSaints(data || []);
+        setSaints(data && data.length > 0 ? data : SAINTS_DATA);
         setIsLoading(false);
       })
       .catch(() => {
-        setSaints([]);
+        setSaints(SAINTS_DATA);
         setIsLoading(false);
       });
   }, []);
