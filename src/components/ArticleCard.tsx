@@ -59,8 +59,8 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
       {/* Thumbnail */}
       <div className="relative h-52 sm:h-56 overflow-hidden bg-slate-900 flex-shrink-0">
         <img
-          src={article.heroImage}
-          alt={article.title}
+          src={article.heroImage || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=800&q=80'}
+          alt={article.title || 'Sufi Heritage Story'}
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
@@ -69,7 +69,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         {/* Top: category badge + bookmark */}
         <div className="absolute top-3 left-3 right-3 flex items-start justify-between pointer-events-none">
           <span className={`px-2.5 py-1 rounded-full text-[10px] font-ui font-bold uppercase tracking-wider bg-gradient-to-r ${accentGradient} text-white shadow-sm`}>
-            {article.category}
+            {article.category || 'Heritage'}
           </span>
 
           <button
@@ -89,11 +89,11 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-[11px] font-ui">
           <span className="flex items-center gap-1 text-amber-200/90 drop-shadow">
             <MapPin className="w-3 h-3 text-amber-400 flex-shrink-0" />
-            <span className="truncate max-w-[160px]">{article.locationName}</span>
+            <span className="truncate max-w-[160px]">{article.locationName || article.region || 'Kashmir'}</span>
           </span>
           <span className="flex items-center gap-1 text-slate-300">
             <Clock className="w-3 h-3 text-amber-400 flex-shrink-0" />
-            {article.readTime}
+            {article.readTime || '5 min read'}
           </span>
         </div>
       </div>
@@ -138,10 +138,10 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         <div className={`pt-3 border-t flex items-center justify-between text-[12px] font-ui ${metaColor}`}>
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-full bg-red-900 text-amber-300 font-editorial font-bold text-[10px] flex items-center justify-center flex-shrink-0">
-              {article.author.charAt(0)}
+              {(article.author || 'Sufi Voice').charAt(0).toUpperCase()}
             </div>
             <span className={`truncate max-w-[100px] font-semibold ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>
-              {article.author}
+              {article.author || 'Editorial Team'}
             </span>
           </div>
 

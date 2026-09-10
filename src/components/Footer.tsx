@@ -218,7 +218,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab, onOpenAdminLogin })
                   <span className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-amber-400/60 group-hover:bg-amber-400 group-hover:scale-125 transition-all flex-shrink-0" />
                     <span className="group-hover:translate-x-0.5 transition-transform font-medium">
-                      {site.name.split(' (')[0]}
+                      {(site.name || '').split(' (')[0]}
                     </span>
                   </span>
                   <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-white/5 group-hover:bg-amber-400/10 text-slate-400 group-hover:text-amber-300 transition-colors border border-white/5">

@@ -312,7 +312,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
                   onClick={() => onNavigateTab('categories')}
                   className="px-3 py-1.5 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-slate-100 text-xs flex items-center space-x-2 cursor-pointer transition-colors shadow-2xs"
                 >
-                  <span className={`w-2 h-2 rounded-full ${cat.colorBadge.split(' ')[0]}`}></span>
+                  <span className={`w-2 h-2 rounded-full ${(cat.colorBadge || 'bg-emerald-500').split(' ')[0]}`}></span>
                   <span className="font-semibold text-slate-800">{cat.name}</span>
                   <span className="text-slate-400 font-mono text-[11px]">({cat.itemCount})</span>
                 </div>

@@ -51,10 +51,14 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   });
 
   // Find linked article for selected site if available
-  const linkedArticle = selectedSite ? articles.find(a => 
-    a.locationName?.toLowerCase().includes(selectedSite.name.toLowerCase().split(' ')[0]) ||
-    selectedSite.name?.toLowerCase().includes(a.locationName?.toLowerCase().split(' ')[0])
-  ) : null;
+  const linkedArticle = selectedSite ? articles.find(a => {
+    const siteFirstWord = (selectedSite.name || '').toLowerCase().split(' ')[0];
+    const locFirstWord = (a.locationName || '').toLowerCase().split(' ')[0];
+    return (
+      (siteFirstWord && a.locationName?.toLowerCase().includes(siteFirstWord)) ||
+      (locFirstWord && selectedSite.name?.toLowerCase().includes(locFirstWord))
+    );
+  }) : null;
 
   return (
     <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-md space-y-6">

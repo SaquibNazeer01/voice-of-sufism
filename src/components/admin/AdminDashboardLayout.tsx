@@ -780,7 +780,7 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
             />
           ) : (
             <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800 font-bold text-xs flex-shrink-0">
-              {s.name.substring(0, 2).toUpperCase()}
+              {(s.name || 'SP').substring(0, 2).toUpperCase()}
             </div>
           )}
           <div>

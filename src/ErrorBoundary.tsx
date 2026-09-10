@@ -42,7 +42,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
             Something went wrong
           </h1>
           <p style={{ fontSize: '0.9rem', color: '#a3a3a3', maxWidth: '480px' }}>
-            An unexpected error occurred while rendering the dashboard. Please reload the page.
+            An unexpected error occurred while rendering. Please reload the page or return to the main site.
           </p>
           {this.state.error && (
             <pre style={{
@@ -59,21 +59,43 @@ export class ErrorBoundary extends React.Component<Props, State> {
               {this.state.error.message}
             </pre>
           )}
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              padding: '0.75rem 2rem',
-              background: '#b45309',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '0.75rem',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              fontSize: '0.875rem'
-            }}
-          >
-            Reload Page
-          </button>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <button
+              onClick={() => window.location.reload()}
+              style={{
+                padding: '0.75rem 1.75rem',
+                background: '#b45309',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '0.75rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                fontSize: '0.875rem'
+              }}
+            >
+              Reload Page
+            </button>
+            <button
+              onClick={() => {
+                try {
+                  localStorage.removeItem('voice_of_sufism_in_admin_mode');
+                } catch {}
+                window.location.href = window.location.origin;
+              }}
+              style={{
+                padding: '0.75rem 1.75rem',
+                background: '#27272a',
+                color: '#fef3c7',
+                border: '1px solid #3f3f46',
+                borderRadius: '0.75rem',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                fontSize: '0.875rem'
+              }}
+            >
+              Return to Public Site
+            </button>
+          </div>
         </div>
       );
     }
