@@ -1,6 +1,6 @@
 import React from 'react';
 import { Article } from '../types';
-import { Bookmark, Clock, MapPin, ArrowUpRight } from 'lucide-react';
+import { Bookmark, Clock, MapPin, ArrowUpRight, Camera } from 'lucide-react';
 import { SharePanel } from './SharePanel';
 
 interface ArticleCardProps {
@@ -66,11 +66,20 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent" />
 
-        {/* Top: category badge + bookmark */}
+        {/* Top: category badge, gallery photo count badge + bookmark */}
         <div className="absolute top-3 left-3 right-3 flex items-start justify-between pointer-events-none">
-          <span className={`px-2.5 py-1 rounded-full text-[10px] font-ui font-bold uppercase tracking-wider bg-gradient-to-r ${accentGradient} text-white shadow-sm`}>
-            {article.category || 'Heritage'}
-          </span>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className={`px-2.5 py-1 rounded-full text-[10px] font-ui font-bold uppercase tracking-wider bg-gradient-to-r ${accentGradient} text-white shadow-sm`}>
+              {article.category || 'Heritage'}
+            </span>
+
+            {article.galleryImages && article.galleryImages.length > 0 && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-ui font-bold bg-black/75 backdrop-blur-md text-amber-300 border border-amber-400/40 flex items-center gap-1 shadow-sm">
+                <Camera className="w-3 h-3 text-amber-400" />
+                <span>{article.galleryImages.length + 1} Photos</span>
+              </span>
+            )}
+          </div>
 
           <button
             onClick={(e) => { e.stopPropagation(); onToggleBookmark(article.id, e); }}

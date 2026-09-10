@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Article } from '../types';
 import { 
   X, 
@@ -14,7 +14,12 @@ import {
   Sun, 
   BookOpen, 
   Compass, 
-  ChevronRight
+  ChevronRight,
+  ChevronLeft,
+  Maximize2,
+  ZoomIn,
+  Camera,
+  Image as ImageIcon
 } from 'lucide-react';
 import { SharePanel, ShareBar } from './SharePanel';
 
@@ -39,11 +44,51 @@ export const ReadingViewModal: React.FC<ReadingViewModalProps> = ({
   const [fontFamily, setFontFamily] = useState<'serif' | 'sans'>('serif');
   const [themeMode, setThemeMode] = useState<'ivory' | 'sepia' | 'dark'>('ivory');
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // Close on Escape key & cleanup speech
+  // Normalize all photos for this article (cover + gallery photos)
+  const allArticlePhotos = useMemo(() => {
+    if (!article) return [];
+    const list: { url: string; caption: string }[] = [];
+    if (article.heroImage) {
+      list.push({ url: article.heroImage, caption: article.title || 'Main Feature Cover' });
+    }
+    if (Array.isArray(article.galleryImages)) {
+      article.galleryImages.forEach((img: any, idx: number) => {
+        const url = typeof img === 'string' ? img : img?.url;
+        const caption = typeof img === 'string' ? '' : img?.caption || '';
+        if (url && (!article.heroImage || url !== article.heroImage)) {
+          list.push({ url, caption: caption || `Archival View #${idx + 1}` });
+        }
+      });
+    }
+    return list;
+  }, [article]);
+
+  // Reset photo indices when opening a new article
+  useEffect(() => {
+    setActivePhotoIndex(0);
+    setLightboxIndex(null);
+  }, [article?.id]);
+
+  // Close on Escape key, lightbox keyboard navigation & cleanup speech
   useEffect(() => {
     if (!article) return;
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Lightbox keyboard navigation
+      if (lightboxIndex !== null) {
+        if (e.key === 'Escape') {
+          setLightboxIndex(null);
+        } else if (e.key === 'ArrowRight') {
+          setLightboxIndex((prev) => (prev !== null && prev < allArticlePhotos.length - 1 ? prev + 1 : 0));
+        } else if (e.key === 'ArrowLeft') {
+          setLightboxIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : allArticlePhotos.length - 1));
+        }
+        return;
+      }
+
+      // Close modal on Escape if lightbox is not open
       if (e.key === 'Escape') {
         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
         onClose();
@@ -54,7 +99,7 @@ export const ReadingViewModal: React.FC<ReadingViewModalProps> = ({
       window.removeEventListener('keydown', handleKeyDown);
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     };
-  }, [article, onClose]);
+  }, [article, onClose, lightboxIndex, allArticlePhotos]);
 
   if (!article) return null;
 
@@ -270,14 +315,123 @@ export const ReadingViewModal: React.FC<ReadingViewModalProps> = ({
             </div>
           </div>
 
-          {/* Hero Banner Image */}
-          <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-lg border-2 sm:border-4 border-black bg-slate-950">
-            <img
-              src={article.heroImage}
-              alt={article.title}
-              referrerPolicy="no-referrer"
-              className="w-full h-48 sm:h-[400px] object-cover"
-            />
+          {/* Hero Banner Image & Interactive Photo Showcase */}
+          <div className="space-y-3">
+            <div className="relative rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl border-2 sm:border-4 border-black bg-slate-950 group">
+              <img
+                src={allArticlePhotos[activePhotoIndex]?.url || article.heroImage}
+                alt={allArticlePhotos[activePhotoIndex]?.caption || article.title}
+                referrerPolicy="no-referrer"
+                className="w-full h-56 sm:h-[440px] object-cover transition-all duration-500 cursor-pointer"
+                onClick={() => setLightboxIndex(activePhotoIndex)}
+              />
+
+              {/* Gradient Vignettes */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/30 pointer-events-none" />
+
+              {/* Top Controls: Photo Counter & Fullscreen Lightbox Button */}
+              <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
+                {allArticlePhotos.length > 1 ? (
+                  <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-black/70 backdrop-blur-md text-amber-300 border border-amber-400/30 flex items-center gap-1.5 shadow-md">
+                    <Camera className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Photo {activePhotoIndex + 1} of {allArticlePhotos.length}</span>
+                  </span>
+                ) : <span />}
+
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(activePhotoIndex)}
+                  className="p-2 rounded-full bg-black/70 hover:bg-black text-amber-300 hover:text-white border border-white/20 backdrop-blur-md pointer-events-auto transition-all shadow-md cursor-pointer hover:scale-105"
+                  title="View Fullscreen Lightbox"
+                >
+                  <Maximize2 className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Prev / Next Navigation Arrows (when multiple photos exist) */}
+              {allArticlePhotos.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActivePhotoIndex((prev) => (prev > 0 ? prev - 1 : allArticlePhotos.length - 1));
+                    }}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 p-2 sm:p-2.5 rounded-full bg-black/60 hover:bg-black text-white hover:text-amber-300 border border-white/20 backdrop-blur-md transition-all shadow-lg cursor-pointer hover:scale-110 opacity-90 hover:opacity-100"
+                    title="Previous Photo"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActivePhotoIndex((prev) => (prev < allArticlePhotos.length - 1 ? prev + 1 : 0));
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 sm:p-2.5 rounded-full bg-black/60 hover:bg-black text-white hover:text-amber-300 border border-white/20 backdrop-blur-md transition-all shadow-lg cursor-pointer hover:scale-110 opacity-90 hover:opacity-100"
+                    title="Next Photo"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
+              )}
+
+              {/* Bottom Caption Overlay */}
+              {allArticlePhotos[activePhotoIndex]?.caption && (
+                <div className="absolute bottom-0 inset-x-0 p-3 sm:p-4 bg-gradient-to-t from-black/95 via-black/70 to-transparent text-white text-xs sm:text-sm font-serif italic border-t border-white/10 flex items-center justify-between gap-3">
+                  <span className="line-clamp-2">
+                    {allArticlePhotos[activePhotoIndex].caption}
+                  </span>
+                  <span className="text-[10px] uppercase font-sans tracking-wider text-amber-300/80 font-bold flex-shrink-0 flex items-center gap-1">
+                    <ZoomIn className="w-3 h-3" /> Click to Zoom
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Interactive Thumbnail Filmstrip (when multiple photos exist) */}
+            {allArticlePhotos.length > 1 && (
+              <div className="space-y-1.5 pt-1">
+                <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium px-1">
+                  <span className="flex items-center gap-1 font-semibold text-amber-900 dark:text-amber-300">
+                    <ImageIcon className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Visual Filmstrip ({allArticlePhotos.length} photos in story)</span>
+                  </span>
+                  <span className="text-[10px] text-slate-500 italic">Click any photo to inspect</span>
+                </div>
+
+                <div className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-thin">
+                  {allArticlePhotos.map((photo, pIdx) => {
+                    const isActive = pIdx === activePhotoIndex;
+                    return (
+                      <button
+                        key={pIdx}
+                        type="button"
+                        onClick={() => setActivePhotoIndex(pIdx)}
+                        className={`relative h-16 w-24 sm:h-20 sm:w-28 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-all duration-300 cursor-pointer ${
+                          isActive
+                            ? 'border-amber-400 ring-2 ring-amber-400/50 shadow-lg scale-105'
+                            : 'border-slate-300 dark:border-white/15 opacity-60 hover:opacity-100 hover:border-amber-300'
+                        }`}
+                      >
+                        <img
+                          src={photo.url}
+                          alt={photo.caption || `Thumbnail ${pIdx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        {isActive && (
+                          <div className="absolute inset-0 bg-amber-500/10 pointer-events-none" />
+                        )}
+                        <span className="absolute bottom-1 right-1 px-1 rounded text-[9px] font-mono font-bold bg-black/80 text-white">
+                          #{pIdx + 1}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Embedded Poetry Quote Card if available */}
@@ -355,40 +509,68 @@ export const ReadingViewModal: React.FC<ReadingViewModalProps> = ({
             </div>
           )}
 
-          {/* Gallery Grid if present */}
-          {article.galleryImages && article.galleryImages.length > 0 && (
-            <div className="space-y-4 pt-6 border-t border-slate-200/80">
-              <div className="flex items-center justify-between">
-                <h3 className={`font-serif text-lg sm:text-xl font-bold flex items-center gap-2 ${themeMode === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                  <span>📸 Photo Essay Archives</span>
-                  <span className="text-xs font-mono font-normal px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 border border-amber-300/60">
-                    {article.galleryImages.length} Photo{article.galleryImages.length === 1 ? '' : 's'}
-                  </span>
-                </h3>
+          {/* Photo Essay & Visual Archives Section */}
+          {allArticlePhotos.length > 1 && (
+            <div className="my-8 sm:my-12 pt-8 border-t-2 border-amber-500/30 space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                  <h3 className={`font-serif text-xl sm:text-2xl font-extrabold flex items-center gap-2 ${themeMode === 'dark' ? 'text-amber-300' : 'text-red-950'}`}>
+                    <Camera className="w-6 h-6 text-amber-600" />
+                    <span>Photo Essay & Visual Archives</span>
+                  </h3>
+                  <p className={`text-xs mt-1 ${themeMode === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+                    High-definition archival photography documenting the spiritual geography, architecture, and sacred atmosphere.
+                  </p>
+                </div>
+                <span className="self-start sm:self-auto px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 border border-amber-300/80">
+                  {allArticlePhotos.length} Archival Photographs
+                </span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {article.galleryImages.map((img: any, idx: number) => {
-                  const url = typeof img === 'string' ? img : img?.url;
-                  const caption = typeof img === 'string' ? '' : img?.caption;
-                  if (!url) return null;
-                  return (
-                    <div key={idx} className="rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 shadow-sm bg-slate-900 group flex flex-col">
-                      <div className="relative h-48 sm:h-56 overflow-hidden">
-                        <img 
-                          src={url} 
-                          alt={caption || `Archival Photo ${idx + 1}`} 
-                          referrerPolicy="no-referrer" 
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                        />
+
+              {/* Magazine Editorial Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {allArticlePhotos.map((photo, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => {
+                      setActivePhotoIndex(idx);
+                      setLightboxIndex(idx);
+                    }}
+                    className="group rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-slate-950 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer flex flex-col"
+                  >
+                    <div className="relative h-48 sm:h-56 overflow-hidden bg-slate-900">
+                      <img
+                        src={photo.url}
+                        alt={photo.caption || `Archive Photo ${idx + 1}`}
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+                      
+                      {/* Photo Badge & Zoom Pill on Hover */}
+                      <span className="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-black/70 text-amber-300 border border-white/15 backdrop-blur-xs">
+                        #{idx + 1}
+                      </span>
+
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                        <span className="px-3 py-1.5 rounded-full bg-black/80 backdrop-blur-md text-amber-300 text-xs font-semibold flex items-center gap-1.5 border border-amber-400/40 shadow-xl">
+                          <ZoomIn className="w-3.5 h-3.5" />
+                          <span>View Fullscreen</span>
+                        </span>
                       </div>
-                      {caption && (
-                        <p className="p-3 text-xs text-slate-200 italic font-serif bg-slate-950/90 border-t border-white/5">
-                          {caption}
-                        </p>
-                      )}
                     </div>
-                  );
-                })}
+
+                    <div className="p-3.5 bg-slate-950/95 border-t border-white/10 flex-1 flex flex-col justify-between space-y-1">
+                      <p className="text-xs font-serif italic text-slate-200 line-clamp-2">
+                        {photo.caption || `Archival perspective #${idx + 1} from ${article.locationName || article.title}`}
+                      </p>
+                      <span className="text-[10px] text-amber-400 font-ui font-semibold flex items-center gap-1 pt-1">
+                        <span>Inspect in Lightbox</span>
+                        <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -459,6 +641,89 @@ export const ReadingViewModal: React.FC<ReadingViewModalProps> = ({
         </div>
 
       </div>
+
+      {/* ══════════════════════════════════════════════
+          FULLSCREEN HIGH-RES LIGHTBOX MODAL
+      ══════════════════════════════════════════════ */}
+      {lightboxIndex !== null && allArticlePhotos[lightboxIndex] && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex flex-col justify-between p-4 sm:p-6 animate-fadeIn"
+          onClick={() => setLightboxIndex(null)}
+        >
+          {/* Lightbox Top Control Bar */}
+          <div 
+            className="flex items-center justify-between text-white z-10 max-w-6xl w-full mx-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center space-x-3">
+              <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-400/40 flex items-center gap-1.5">
+                <Camera className="w-3.5 h-3.5" />
+                <span>Photo {lightboxIndex + 1} of {allArticlePhotos.length}</span>
+              </span>
+              <span className="text-xs text-slate-400 hidden sm:inline truncate max-w-md font-serif">
+                {article.title}
+              </span>
+            </div>
+
+            <button
+              onClick={() => setLightboxIndex(null)}
+              className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white hover:text-amber-300 transition-colors cursor-pointer border border-white/15"
+              title="Close Fullscreen (Esc)"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Lightbox Main Image & Floating Arrows */}
+          <div 
+            className="relative flex-1 flex items-center justify-center p-2 sm:p-6 select-none"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {allArticlePhotos.length > 1 && (
+              <button
+                type="button"
+                onClick={() => setLightboxIndex((prev) => (prev !== null && prev > 0 ? prev - 1 : allArticlePhotos.length - 1))}
+                className="absolute left-2 sm:left-6 z-20 p-3 rounded-full bg-black/70 hover:bg-black text-white hover:text-amber-300 border border-white/25 backdrop-blur-md transition-transform hover:scale-110 cursor-pointer shadow-2xl"
+                title="Previous (Left Arrow)"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+            )}
+
+            <img
+              src={allArticlePhotos[lightboxIndex].url}
+              alt={allArticlePhotos[lightboxIndex].caption || 'Archival view'}
+              className="max-h-[75vh] max-w-[92vw] sm:max-w-[85vw] object-contain rounded-2xl shadow-2xl border border-white/15 transition-all duration-300"
+            />
+
+            {allArticlePhotos.length > 1 && (
+              <button
+                type="button"
+                onClick={() => setLightboxIndex((prev) => (prev !== null && prev < allArticlePhotos.length - 1 ? prev + 1 : 0))}
+                className="absolute right-2 sm:right-6 z-20 p-3 rounded-full bg-black/70 hover:bg-black text-white hover:text-amber-300 border border-white/25 backdrop-blur-md transition-transform hover:scale-110 cursor-pointer shadow-2xl"
+                title="Next (Right Arrow)"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            )}
+          </div>
+
+          {/* Lightbox Bottom Caption Bar */}
+          <div 
+            className="max-w-4xl w-full mx-auto text-center space-y-2 z-10"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {allArticlePhotos[lightboxIndex].caption && (
+              <p className="text-sm sm:text-base font-serif italic text-amber-100 bg-black/60 backdrop-blur-md p-3 rounded-2xl border border-white/10 max-w-2xl mx-auto">
+                "{allArticlePhotos[lightboxIndex].caption}"
+              </p>
+            )}
+            <p className="text-[11px] text-slate-400 font-mono">
+              Use <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-slate-300">←</kbd> <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-slate-300">→</kbd> arrow keys to navigate • <kbd className="px-1.5 py-0.5 bg-white/10 rounded text-slate-300">ESC</kbd> to close
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

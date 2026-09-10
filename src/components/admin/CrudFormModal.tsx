@@ -11,18 +11,21 @@ import {
   Check, 
   FileText, 
   MapPin, 
-  Feather,
-  Link,
-  ShieldCheck,
-  Eye,
-  Plus,
-  Trash2,
-  Camera,
-  Sparkles
+  Feather, 
+  Link, 
+  ShieldCheck, 
+  Eye, 
+  Plus, 
+  Trash2, 
+  Camera, 
+  Sparkles,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 import { Article, SufiSaint, HeritageSite, PoemVerse, PhotoGalleryItem } from '../../types';
 import { KashmiriCultureItem, FolkloreStory, CmsUser, CmsCategoryItem } from '../../types/cms';
 import { SupabaseService } from '../../services/supabaseService';
+import { FirebaseService } from '../../services/firebaseService';
 
 interface CrudFormModalProps {
   isOpen: boolean;
@@ -30,19 +33,35 @@ interface CrudFormModalProps {
   mode: 'add' | 'edit' | 'view';
   moduleType: 'articles' | 'saints' | 'sites' | 'poems' | 'photos' | 'culture' | 'folklore' | 'categories' | 'users' | 'ads' | 'sponsors';
   initialData?: any;
-  onSave: (data: any) => void;
+  onSave: (data: any) => Promise<void> | void;
 }
 
-// Helper to convert uploaded files directly to optimized Base64 Data URLs
-const convertFileToBase64 = (file: File): Promise<string> => {
+// Ultra-efficient image optimization:
+// 1. Attempts Cloud Storage upload if available.
+// 2. Falls back to ultra-light canvas compression (max 800x650, JPEG quality 0.62)
+// This dramatically reduces image size from ~500KB down to ~25-35KB, allowing dozens of images without hitting Firestore's 1MB limit.
+export const optimizeImageFile = async (file: File): Promise<string> => {
+  // If Firebase Storage is available, attempt upload
+  try {
+    if (FirebaseService.isAvailable()) {
+      const storageUrl = await FirebaseService.uploadFile(file, 'articles');
+      if (storageUrl && !storageUrl.startsWith('blob:')) {
+        return storageUrl;
+      }
+    }
+  } catch (storageErr) {
+    // If Firebase Storage requires Blaze / billing or is not set up, fall back to ultra-compact web compression
+    console.warn('Firebase Storage upload skipped; falling back to ultra-efficient web compression:', storageErr);
+  }
+
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 1200;
-        const MAX_HEIGHT = 900;
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 650;
         let width = img.width;
         let height = img.height;
 
@@ -61,9 +80,14 @@ const convertFileToBase64 = (file: File): Promise<string> => {
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
-        ctx?.drawImage(img, 0, 0, width, height);
-        // Optimize to JPEG quality 0.85
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        if (ctx) {
+          // White background for PNG transparent images
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+        }
+        // Optimize to JPEG quality 0.62 (~25KB-35KB per photo)
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.62);
         resolve(dataUrl);
       };
       img.onerror = () => resolve(reader.result as string);
@@ -73,6 +97,8 @@ const convertFileToBase64 = (file: File): Promise<string> => {
     reader.readAsDataURL(file);
   });
 };
+
+const convertFileToBase64 = optimizeImageFile;
 
 export const CrudFormModal: React.FC<CrudFormModalProps> = ({
   isOpen,
@@ -85,11 +111,15 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
   const [formData, setFormData] = useState<any>({});
   const [imagePreview, setImagePreview] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [newGalleryUrl, setNewGalleryUrl] = useState<string>('');
   const [newGalleryCaption, setNewGalleryCaption] = useState<string>('');
 
   useEffect(() => {
     if (!isOpen) return;
+    setSubmitError(null);
+    setIsSubmitting(false);
     if (initialData) {
       const normalizedGallery = Array.isArray(initialData.galleryImages)
         ? initialData.galleryImages.map((item: any) => 
@@ -287,10 +317,20 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
-    onClose();
+    if (isSubmitting || isUploading) return;
+    setIsSubmitting(true);
+    setSubmitError(null);
+    try {
+      await onSave(formData);
+      onClose();
+    } catch (err: any) {
+      console.error('Save failed in modal:', err);
+      setSubmitError(err?.message || 'Failed to save record to database. Please check your connection and image sizes.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const insertTextFormatting = (syntax: string) => {
@@ -1334,22 +1374,44 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                 )}
               </div>
 
+              {/* Submit Error Banner */}
+              {submitError && (
+                <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-900 text-xs flex items-start gap-2.5 animate-fadeIn">
+                  <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="block font-bold text-red-950">Unable to Save Record</strong>
+                    <p className="text-red-800 mt-0.5">{submitError}</p>
+                  </div>
+                </div>
+              )}
+
               {/* Submit / Cancel Buttons */}
-              <div className="pt-2 flex justify-end space-x-3">
+              <div className="pt-2 flex items-center justify-end space-x-3">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs"
+                  disabled={isSubmitting}
+                  className="px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-50 text-slate-700 font-bold text-xs cursor-pointer transition-colors"
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  className="px-6 py-3 rounded-xl bg-[#0F4C3A] hover:bg-[#1B5E4B] text-amber-300 font-bold text-xs shadow-lg flex items-center space-x-1.5"
+                  disabled={isSubmitting || isUploading}
+                  className="px-6 py-3 rounded-xl bg-[#0F4C3A] hover:bg-[#1B5E4B] disabled:opacity-50 disabled:cursor-not-allowed text-amber-300 font-bold text-xs shadow-lg flex items-center space-x-2 transition-all cursor-pointer"
                 >
-                  <Check className="w-4 h-4" />
-                  <span>Save Record to CMS</span>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-amber-300" />
+                      <span>Saving to Database...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>Save Record to CMS</span>
+                    </>
+                  )}
                 </button>
               </div>
 

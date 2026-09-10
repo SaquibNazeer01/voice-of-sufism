@@ -23,9 +23,48 @@ export interface FirebaseHealthStatus {
   errorMessage?: string;
 }
 
+// Recursively remove undefined values, normalize arrays, and sanitize objects for Cloud Firestore
+export function cleanForFirestore(obj: any): any {
+  if (obj === undefined) return null;
+  if (obj === null || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) {
+    return obj
+      .filter(item => item !== undefined)
+      .map(item => cleanForFirestore(item));
+  }
+  const cleaned: Record<string, any> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined) {
+      cleaned[key] = cleanForFirestore(value);
+    }
+  }
+  return cleaned;
+}
+
 export class FirebaseService {
   static isAvailable(): boolean {
     return isFirebaseConfigured && db !== null;
+  }
+
+  // Safe setter that strips undefined fields and enforces document limits
+  private static async safeSetDoc(docRef: any, rawData: any, options: { merge?: boolean } = { merge: true }): Promise<void> {
+    const cleaned = cleanForFirestore(rawData);
+    
+    // Safety check for Firestore 1MB document limit
+    try {
+      const jsonStr = JSON.stringify(cleaned);
+      const approxBytes = new Blob([jsonStr]).size;
+      if (approxBytes > 950000) {
+        console.warn(`[FirebaseService] Document is close to 1MB Firestore limit (${(approxBytes / 1024).toFixed(1)} KB)`);
+      }
+      if (approxBytes > 1048000) {
+        throw new Error(`Record size (${(approxBytes / 1024).toFixed(0)} KB) exceeds Cloud Firestore's 1MB limit. Please reduce image sizes or upload fewer pictures.`);
+      }
+    } catch (e: any) {
+      if (e?.message?.includes('Firestore')) throw e;
+    }
+
+    await setDoc(docRef, cleaned, options);
   }
 
   // Diagnostic health check for Cloud Firestore
@@ -119,12 +158,21 @@ export class FirebaseService {
     try {
       const id = article.id || `art-${Date.now()}`;
       const docRef = doc(db!, 'articles', id);
+
+      // Clean and normalize galleryImages to strictly valid objects
+      const normalizedGallery = Array.isArray(article.galleryImages)
+        ? article.galleryImages
+            .filter((item: any) => item && (typeof item === 'string' ? item.trim() : item.url?.trim()))
+            .map((item: any) => typeof item === 'string' ? { url: item, caption: '' } : { url: item.url, caption: item.caption || '' })
+        : [];
+
       const payload = {
         ...article,
         id,
+        galleryImages: normalizedGallery,
         updatedAt: new Date().toISOString()
       };
-      await setDoc(docRef, payload, { merge: true });
+      await this.safeSetDoc(docRef, payload);
       return payload as Article;
     } catch (err: any) {
       console.error('Firebase saveArticle error:', err);
@@ -165,7 +213,7 @@ export class FirebaseService {
       const id = saint.id || `saint-${Date.now()}`;
       const docRef = doc(db!, 'sufi_saints', id);
       const payload = { ...saint, id, updatedAt: new Date().toISOString() };
-      await setDoc(docRef, payload, { merge: true });
+      await this.safeSetDoc(docRef, payload);
       return payload as SufiSaint;
     } catch (err: any) {
       console.error('Firebase saveSaint error:', err);
@@ -205,7 +253,7 @@ export class FirebaseService {
       const id = site.id || `site-${Date.now()}`;
       const docRef = doc(db!, 'heritage_sites', id);
       const payload = { ...site, id, updatedAt: new Date().toISOString() };
-      await setDoc(docRef, payload, { merge: true });
+      await this.safeSetDoc(docRef, payload);
       return payload as HeritageSite;
     } catch (err: any) {
       console.error('Firebase saveSite error:', err);
@@ -245,7 +293,7 @@ export class FirebaseService {
       const id = poem.id || `poem-${Date.now()}`;
       const docRef = doc(db!, 'poem_verses', id);
       const payload = { ...poem, id, updatedAt: new Date().toISOString() };
-      await setDoc(docRef, payload, { merge: true });
+      await this.safeSetDoc(docRef, payload);
       return payload as PoemVerse;
     } catch (err: any) {
       console.error('Firebase savePoem error:', err);
@@ -285,7 +333,7 @@ export class FirebaseService {
       const id = photo.id || `photo-${Date.now()}`;
       const docRef = doc(db!, 'photo_gallery', id);
       const payload = { ...photo, id, updatedAt: new Date().toISOString() };
-      await setDoc(docRef, payload, { merge: true });
+      await this.safeSetDoc(docRef, payload);
       return payload as PhotoGalleryItem;
     } catch (err: any) {
       console.error('Firebase savePhoto error:', err);
@@ -325,7 +373,7 @@ export class FirebaseService {
       const id = item.id || `cult-${Date.now()}`;
       const docRef = doc(db!, 'culture_items', id);
       const payload = { ...item, id, updatedAt: new Date().toISOString() };
-      await setDoc(docRef, payload, { merge: true });
+      await this.safeSetDoc(docRef, payload);
       return payload as KashmiriCultureItem;
     } catch (err: any) {
       console.error('Firebase saveCultureItem error:', err);
@@ -365,7 +413,7 @@ export class FirebaseService {
       const id = story.id || `folk-${Date.now()}`;
       const docRef = doc(db!, 'folklore_stories', id);
       const payload = { ...story, id, updatedAt: new Date().toISOString() };
-      await setDoc(docRef, payload, { merge: true });
+      await this.safeSetDoc(docRef, payload);
       return payload as FolkloreStory;
     } catch (err: any) {
       console.error('Firebase saveFolkloreStory error:', err);
@@ -405,7 +453,7 @@ export class FirebaseService {
       const id = cat.id || `cat-${Date.now()}`;
       const docRef = doc(db!, 'cms_categories', id);
       const payload = { ...cat, id, updatedAt: new Date().toISOString() };
-      await setDoc(docRef, payload, { merge: true });
+      await this.safeSetDoc(docRef, payload);
       return payload as CmsCategoryItem;
     } catch (err: any) {
       console.error('Firebase saveCategory error:', err);
@@ -445,7 +493,7 @@ export class FirebaseService {
       const id = user.id || `user-${Date.now()}`;
       const docRef = doc(db!, 'cms_users', id);
       const payload = { ...user, id, updatedAt: new Date().toISOString() };
-      await setDoc(docRef, payload, { merge: true });
+      await this.safeSetDoc(docRef, payload);
       return payload as CmsUser;
     } catch (err: any) {
       console.error('Firebase saveUser error:', err);
@@ -485,7 +533,7 @@ export class FirebaseService {
       const id = ad.id || `ad-${Date.now()}`;
       const docRef = doc(db!, 'cms_advertisements', id);
       const payload = { ...ad, id, updatedAt: new Date().toISOString() };
-      await setDoc(docRef, payload, { merge: true });
+      await this.safeSetDoc(docRef, payload);
       return payload as Advertisement;
     } catch (err: any) {
       console.error('Firebase saveAdvertisement error:', err);
@@ -525,7 +573,7 @@ export class FirebaseService {
       const id = sponsor.id || `spons-${Date.now()}`;
       const docRef = doc(db!, 'cms_sponsors', id);
       const payload = { ...sponsor, id, updatedAt: new Date().toISOString() };
-      await setDoc(docRef, payload, { merge: true });
+      await this.safeSetDoc(docRef, payload);
       return payload as Sponsor;
     } catch (err: any) {
       console.error('Firebase saveSponsor error:', err);
@@ -562,7 +610,7 @@ export class FirebaseService {
     if (!this.isAvailable()) return settings;
     try {
       const docRef = doc(db!, 'cms_settings', 'global_config');
-      await setDoc(docRef, { ...settings, updatedAt: new Date().toISOString() }, { merge: true });
+      await this.safeSetDoc(docRef, { ...settings, updatedAt: new Date().toISOString() });
       return settings;
     } catch (err: any) {
       console.error('Firebase saveSettings error:', err);
@@ -594,7 +642,7 @@ export class FirebaseService {
         month: 'short', day: 'numeric', year: 'numeric',
         hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
       });
-      await setDoc(docRef, { ...log, id, timestamp: exactTimestamp });
+      await this.safeSetDoc(docRef, { ...log, id, timestamp: exactTimestamp }, { merge: false });
     } catch (err) {
       console.warn('Failed to log activity to Firebase:', err);
     }

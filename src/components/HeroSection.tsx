@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Article, CategoryType } from '../types';
-import { BookOpen, MapPin, ArrowRight, Compass, ShieldCheck, Phone, Mail, Calendar, Building2, Copy, Check } from 'lucide-react';
+import { BookOpen, MapPin, ArrowRight, Compass, ShieldCheck, Phone, Mail, Calendar, Building2, Copy, Check, Camera } from 'lucide-react';
 
 interface HeroSectionProps {
   featuredArticle?: Article | null;
@@ -289,7 +289,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-5 left-5 right-5 text-white space-y-2">
-                    <p className="text-[10px] font-ui uppercase tracking-widest text-amber-400 font-bold">Cover Story</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-[10px] font-ui uppercase tracking-widest text-amber-400 font-bold">Cover Story</p>
+                      {featuredArticle.galleryImages && featuredArticle.galleryImages.length > 0 && (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-ui font-bold bg-black/75 backdrop-blur-md text-amber-300 border border-amber-400/40 flex items-center gap-1 shadow-sm">
+                          <Camera className="w-3 h-3 text-amber-400" />
+                          <span>{featuredArticle.galleryImages.length + 1} Photos</span>
+                        </span>
+                      )}
+                    </div>
                     <h3 className="font-editorial text-lg sm:text-xl font-bold leading-snug group-hover:text-amber-200 transition-colors">
                       {featuredArticle.subtitle}
                     </h3>

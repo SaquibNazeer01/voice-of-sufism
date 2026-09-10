@@ -232,6 +232,7 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
         ? 'Firebase Permission Denied! Firestore security rules are blocking writes. Open Firebase Console > Firestore Database > Rules and set "allow read, write: if true;"'
         : err?.message || 'An error occurred while saving to database.';
       addToast('error', 'Save Failed', errorMsg);
+      throw new Error(errorMsg);
     }
   };
 
