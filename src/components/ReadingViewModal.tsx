@@ -357,17 +357,38 @@ export const ReadingViewModal: React.FC<ReadingViewModalProps> = ({
 
           {/* Gallery Grid if present */}
           {article.galleryImages && article.galleryImages.length > 0 && (
-            <div className="space-y-3 pt-6 border-t border-slate-200">
-              <h3 className={`font-serif text-lg sm:text-xl font-bold ${themeMode === 'dark' ? 'text-white' : 'text-slate-900'}`}>
-                Photo Essay Archives
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                {article.galleryImages.map((img, idx) => (
-                  <div key={idx} className="rounded-xl overflow-hidden border border-slate-200 shadow bg-slate-900">
-                    <img src={img.url} alt={img.caption} referrerPolicy="no-referrer" className="w-full h-40 sm:h-48 object-cover" />
-                    <p className="p-2.5 text-xs text-slate-300 italic font-serif">{img.caption}</p>
-                  </div>
-                ))}
+            <div className="space-y-4 pt-6 border-t border-slate-200/80">
+              <div className="flex items-center justify-between">
+                <h3 className={`font-serif text-lg sm:text-xl font-bold flex items-center gap-2 ${themeMode === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                  <span>📸 Photo Essay Archives</span>
+                  <span className="text-xs font-mono font-normal px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 border border-amber-300/60">
+                    {article.galleryImages.length} Photo{article.galleryImages.length === 1 ? '' : 's'}
+                  </span>
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {article.galleryImages.map((img: any, idx: number) => {
+                  const url = typeof img === 'string' ? img : img?.url;
+                  const caption = typeof img === 'string' ? '' : img?.caption;
+                  if (!url) return null;
+                  return (
+                    <div key={idx} className="rounded-2xl overflow-hidden border border-slate-200/80 dark:border-white/10 shadow-sm bg-slate-900 group flex flex-col">
+                      <div className="relative h-48 sm:h-56 overflow-hidden">
+                        <img 
+                          src={url} 
+                          alt={caption || `Archival Photo ${idx + 1}`} 
+                          referrerPolicy="no-referrer" 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                        />
+                      </div>
+                      {caption && (
+                        <p className="p-3 text-xs text-slate-200 italic font-serif bg-slate-950/90 border-t border-white/5">
+                          {caption}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

@@ -14,7 +14,11 @@ import {
   Feather,
   Link,
   ShieldCheck,
-  Eye
+  Eye,
+  Plus,
+  Trash2,
+  Camera,
+  Sparkles
 } from 'lucide-react';
 import { Article, SufiSaint, HeritageSite, PoemVerse, PhotoGalleryItem } from '../../types';
 import { KashmiriCultureItem, FolkloreStory, CmsUser, CmsCategoryItem } from '../../types/cms';
@@ -81,11 +85,28 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
   const [formData, setFormData] = useState<any>({});
   const [imagePreview, setImagePreview] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [newGalleryUrl, setNewGalleryUrl] = useState<string>('');
+  const [newGalleryCaption, setNewGalleryCaption] = useState<string>('');
 
   useEffect(() => {
     if (!isOpen) return;
     if (initialData) {
-      setFormData({ ...initialData });
+      const normalizedGallery = Array.isArray(initialData.galleryImages)
+        ? initialData.galleryImages.map((item: any) => 
+            typeof item === 'string' ? { url: item, caption: '' } : { url: item?.url || '', caption: item?.caption || '' }
+          )
+        : [];
+
+      setFormData({
+        ...initialData,
+        author: initialData.author ?? (moduleType === 'articles' ? 'Admin' : ''),
+        authorRole: initialData.authorRole ?? (moduleType === 'articles' ? 'Heritage Contributor' : ''),
+        title: initialData.title ?? initialData.name ?? '',
+        titleUrdu: initialData.titleUrdu ?? initialData.kashmiriName ?? initialData.kashmiriTitle ?? '',
+        subtitle: initialData.subtitle ?? '',
+        excerpt: initialData.excerpt ?? '',
+        galleryImages: normalizedGallery,
+      });
       setImagePreview(initialData.heroImage || initialData.image || initialData.imageUrl || '');
     } else {
       // Default blank values based on module
@@ -108,7 +129,8 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
           excerpt: '',
           contentMarkdown: '',
           tags: ['Heritage', 'Kashmir', 'Sufism'],
-          featured: false
+          featured: false,
+          galleryImages: []
         });
         setImagePreview('');
       } else if (moduleType === 'saints') {
@@ -302,6 +324,80 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
     }
   };
 
+  const handleMultipleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setIsUploading(true);
+    try {
+      const newItems: { url: string; caption: string }[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const base64Url = await convertFileToBase64(file);
+        const defaultCaption = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+        newItems.push({ url: base64Url, caption: defaultCaption });
+      }
+      const existing = Array.isArray(formData.galleryImages) ? formData.galleryImages : [];
+      const updated = [...existing, ...newItems];
+      setFormData((prev: any) => ({ ...prev, galleryImages: updated }));
+      if (!formData.heroImage && !formData.image && newItems.length > 0) {
+        setImagePreview(newItems[0].url);
+        setFormData((prev: any) => ({
+          ...prev,
+          heroImage: newItems[0].url,
+          image: newItems[0].url,
+          imageUrl: newItems[0].url,
+          galleryImages: updated
+        }));
+      }
+    } catch (err) {
+      console.error('Multiple file upload failed:', err);
+    } finally {
+      setIsUploading(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleAddGalleryUrl = () => {
+    if (!newGalleryUrl.trim()) return;
+    const existing = Array.isArray(formData.galleryImages) ? formData.galleryImages : [];
+    const updated = [...existing, { url: newGalleryUrl.trim(), caption: newGalleryCaption.trim() }];
+    setFormData((prev: any) => ({ ...prev, galleryImages: updated }));
+    setNewGalleryUrl('');
+    setNewGalleryCaption('');
+  };
+
+  const handleRemoveGalleryImage = (index: number) => {
+    const existing = Array.isArray(formData.galleryImages) ? formData.galleryImages : [];
+    const updated = existing.filter((_: any, idx: number) => idx !== index);
+    setFormData((prev: any) => ({ ...prev, galleryImages: updated }));
+  };
+
+  const handleUpdateGalleryCaption = (index: number, caption: string) => {
+    const existing = Array.isArray(formData.galleryImages) ? [...formData.galleryImages] : [];
+    if (existing[index]) {
+      existing[index] = { ...existing[index], caption };
+      setFormData((prev: any) => ({ ...prev, galleryImages: existing }));
+    }
+  };
+
+  const handleSetAsCoverImage = (url: string) => {
+    setImagePreview(url);
+    setFormData((prev: any) => ({
+      ...prev,
+      heroImage: url,
+      image: url,
+      imageUrl: url
+    }));
+  };
+
+  const handleInsertGalleryIntoContent = (img: { url: string; caption?: string }) => {
+    const markdownSnippet = `\n\n![${img.caption || 'Archival Image'}](${img.url})\n*${img.caption || ''}*\n\n`;
+    setFormData((prev: any) => ({
+      ...prev,
+      contentMarkdown: (prev.contentMarkdown || '') + markdownSnippet
+    }));
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn overflow-y-auto">
       <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8">
@@ -361,7 +457,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <input
                         type="text"
                         required
-                        value={formData.title || ''}
+                        value={formData.title ?? ''}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         placeholder="e.g. Vakh: Gagan Tsarun / Shruk: Anposh"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium text-xs focus:ring-2 focus:ring-emerald-700"
@@ -373,7 +469,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <input
                         type="text"
                         required
-                        value={formData.poetName || ''}
+                        value={formData.poetName ?? ''}
                         onChange={(e) => setFormData({ ...formData, poetName: e.target.value })}
                         placeholder="e.g. Sheikh-ul-Alam / Lal Ded / Habba Khatoon"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium text-xs focus:ring-2 focus:ring-emerald-700"
@@ -386,7 +482,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <label className="block font-bold text-slate-800 mb-1">Poet Role / Title</label>
                       <input
                         type="text"
-                        value={formData.poetRole || ''}
+                        value={formData.poetRole ?? ''}
                         onChange={(e) => setFormData({ ...formData, poetRole: e.target.value })}
                         placeholder="e.g. 14th Century Mystic / Patron Reshi Saint"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700"
@@ -412,7 +508,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <label className="block font-bold text-slate-800 mb-1">Era / Century</label>
                       <input
                         type="text"
-                        value={formData.yearCentury || ''}
+                        value={formData.yearCentury ?? ''}
                         onChange={(e) => setFormData({ ...formData, yearCentury: e.target.value })}
                         placeholder="e.g. 14th Century AD"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700"
@@ -424,7 +520,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                     <label className="block font-bold text-slate-800 mb-1">Original Kashmiri / Urdu Script or Verse</label>
                     <textarea
                       rows={3}
-                      value={formData.kashmiriScript || ''}
+                      value={formData.kashmiriScript ?? ''}
                       onChange={(e) => setFormData({ ...formData, kashmiriScript: e.target.value })}
                       placeholder="گگن ژھٲرُن تہٕ دیس ژھٲرُن..."
                       className="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 font-serif text-base text-right dir-rtl focus:ring-2 focus:ring-emerald-700"
@@ -435,7 +531,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                     <label className="block font-bold text-slate-800 mb-1">Phonetic Transliteration (Koshur)</label>
                     <textarea
                       rows={2}
-                      value={formData.transliteration || ''}
+                      value={formData.transliteration ?? ''}
                       onChange={(e) => setFormData({ ...formData, transliteration: e.target.value })}
                       placeholder="Gagan tsarun ta deys tsarun..."
                       className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-serif italic text-xs focus:ring-2 focus:ring-emerald-700"
@@ -447,7 +543,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                     <textarea
                       rows={3}
                       required
-                      value={formData.englishTranslation || ''}
+                      value={formData.englishTranslation ?? ''}
                       onChange={(e) => setFormData({ ...formData, englishTranslation: e.target.value })}
                       placeholder="Explain the mystical meaning and English translation of the couplet..."
                       className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700"
@@ -458,7 +554,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                     <label className="block font-bold text-slate-800 mb-1">Historical Context / Notes (Optional)</label>
                     <input
                       type="text"
-                      value={formData.historicalContext || ''}
+                      value={formData.historicalContext ?? ''}
                       onChange={(e) => setFormData({ ...formData, historicalContext: e.target.value })}
                       placeholder="e.g. Composed during spiritual meditation..."
                       className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700"
@@ -496,7 +592,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
 
                         <input
                           type="text"
-                          value={formData.bannerImage || ''}
+                          value={formData.bannerImage ?? ''}
                           onChange={(e) => {
                             const val = e.target.value;
                             setImagePreview(val);
@@ -516,7 +612,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <input
                         type="text"
                         required
-                        value={formData.title || ''}
+                        value={formData.title ?? ''}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                         placeholder="e.g. Traditional Hand-Woven Pashmina Shawls 20% Off"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium text-xs focus:ring-2 focus:ring-emerald-700"
@@ -528,7 +624,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <input
                         type="text"
                         required
-                        value={formData.advertiserName || ''}
+                        value={formData.advertiserName ?? ''}
                         onChange={(e) => setFormData({ ...formData, advertiserName: e.target.value })}
                         placeholder="e.g. Kashmir Heritage Crafts Emporium"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium text-xs focus:ring-2 focus:ring-emerald-700"
@@ -557,7 +653,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <input
                         type="text"
                         required
-                        value={formData.targetUrl || ''}
+                        value={formData.targetUrl ?? ''}
                         onChange={(e) => setFormData({ ...formData, targetUrl: e.target.value })}
                         placeholder="e.g. https://wa.me/919596154384 or https://mywebsite.com"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700 font-mono"
@@ -571,7 +667,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <label className="block font-bold text-slate-800 mb-1">Advertiser Phone / WhatsApp</label>
                       <input
                         type="text"
-                        value={formData.contactNumber || ''}
+                        value={formData.contactNumber ?? ''}
                         onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
                         placeholder="+91 9596154384"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700"
@@ -582,7 +678,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <label className="block font-bold text-slate-800 mb-1">Advertiser Email</label>
                       <input
                         type="email"
-                        value={formData.contactEmail || ''}
+                        value={formData.contactEmail ?? ''}
                         onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
                         placeholder="contact@brand.com"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700"
@@ -596,7 +692,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                     <textarea
                       rows={3}
                       required
-                      value={formData.description || ''}
+                      value={formData.description ?? ''}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       placeholder="Describe the offer, special deals, or call-to-action message for visitors..."
                       className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700"
@@ -676,7 +772,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
 
                         <input
                           type="text"
-                          value={formData.logo || ''}
+                          value={formData.logo ?? ''}
                           onChange={(e) => {
                             const val = e.target.value;
                             setImagePreview(val);
@@ -696,7 +792,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <input
                         type="text"
                         required
-                        value={formData.name || ''}
+                        value={formData.name ?? ''}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="e.g. Jammu & Kashmir Heritage Trust"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium text-xs focus:ring-2 focus:ring-emerald-700"
@@ -724,7 +820,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <label className="block font-bold text-slate-800 mb-1">Tagline / Short Slogan (Optional)</label>
                       <input
                         type="text"
-                        value={formData.tagline || ''}
+                        value={formData.tagline ?? ''}
                         onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
                         placeholder="e.g. Empowering Cultural Research in the Valley"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700"
@@ -735,7 +831,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <label className="block font-bold text-slate-800 mb-1">Official Website URL</label>
                       <input
                         type="text"
-                        value={formData.websiteUrl || ''}
+                        value={formData.websiteUrl ?? ''}
                         onChange={(e) => setFormData({ ...formData, websiteUrl: e.target.value })}
                         placeholder="https://partner-website.org"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700 font-mono"
@@ -749,7 +845,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <label className="block font-bold text-slate-800 mb-1">Contact Phone</label>
                       <input
                         type="text"
-                        value={formData.contactPhone || ''}
+                        value={formData.contactPhone ?? ''}
                         onChange={(e) => setFormData({ ...formData, contactPhone: e.target.value })}
                         placeholder="+91 9596154384"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700"
@@ -760,7 +856,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <label className="block font-bold text-slate-800 mb-1">Contact Email</label>
                       <input
                         type="email"
-                        value={formData.contactEmail || ''}
+                        value={formData.contactEmail ?? ''}
                         onChange={(e) => setFormData({ ...formData, contactEmail: e.target.value })}
                         placeholder="info@sponsor.org"
                         className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700"
@@ -774,7 +870,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                     <textarea
                       rows={3}
                       required
-                      value={formData.description || ''}
+                      value={formData.description ?? ''}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       placeholder="Describe the organization and their support towards Kashmiri cultural heritage..."
                       className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700"
@@ -843,6 +939,126 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                     </div>
                   )}
 
+                  {/* Multi-Image Gallery Uploader for Articles, Sites, Culture */}
+                  {(moduleType === 'articles' || moduleType === 'sites' || moduleType === 'culture') && (
+                    <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200/90 space-y-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                        <div>
+                          <label className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                            <Camera className="w-4 h-4 text-amber-700" />
+                            <span>Additional Photo Gallery & Story Images</span>
+                          </label>
+                          <p className="text-[11px] text-slate-600 mt-0.5">
+                            Add multiple images to this {moduleType === 'articles' ? 'article' : 'record'}. They appear in the Photo Essay gallery and can be inserted into the story.
+                          </p>
+                        </div>
+                        <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 self-start sm:self-auto">
+                          {(formData.galleryImages || []).length} Photo{(formData.galleryImages || []).length === 1 ? '' : 's'}
+                        </span>
+                      </div>
+
+                      {/* Upload buttons & URL input */}
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <label className="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-white font-bold text-xs cursor-pointer flex items-center justify-center space-x-1.5 shadow-sm transition-all flex-shrink-0">
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>+ Upload Multiple Files</span>
+                          <input 
+                            type="file" 
+                            multiple 
+                            accept="image/*" 
+                            onChange={handleMultipleGalleryUpload} 
+                            className="hidden" 
+                          />
+                        </label>
+
+                        <div className="flex-1 flex gap-2">
+                          <input
+                            type="text"
+                            value={newGalleryUrl}
+                            onChange={(e) => setNewGalleryUrl(e.target.value)}
+                            placeholder="Or paste external Image URL..."
+                            className="flex-1 p-2 rounded-xl border border-slate-200 bg-white text-xs focus:ring-2 focus:ring-amber-600"
+                          />
+                          <input
+                            type="text"
+                            value={newGalleryCaption}
+                            onChange={(e) => setNewGalleryCaption(e.target.value)}
+                            placeholder="Caption (optional)"
+                            className="w-36 sm:w-44 p-2 rounded-xl border border-slate-200 bg-white text-xs focus:ring-2 focus:ring-amber-600 hidden sm:block"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleAddGalleryUrl}
+                            disabled={!newGalleryUrl.trim()}
+                            className="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-amber-300 font-bold text-xs flex items-center gap-1 cursor-pointer transition-colors"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>Add</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {isUploading && (
+                        <div className="text-xs text-amber-800 font-semibold flex items-center gap-1.5 animate-pulse">
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Compressing and attaching multiple images...</span>
+                        </div>
+                      )}
+
+                      {/* Gallery thumbnails grid */}
+                      {(formData.galleryImages || []).length > 0 && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-2">
+                          {(formData.galleryImages || []).map((img: any, idx: number) => {
+                            const url = typeof img === 'string' ? img : img?.url;
+                            const caption = typeof img === 'string' ? '' : img?.caption || '';
+                            return (
+                              <div key={idx} className="p-2.5 rounded-xl bg-white border border-slate-200 shadow-xs space-y-2 relative group">
+                                <div className="relative h-28 rounded-lg overflow-hidden bg-slate-100 border border-slate-100">
+                                  <img src={url} alt={caption || `Gallery ${idx + 1}`} className="w-full h-full object-cover" />
+                                  <button
+                                    type="button"
+                                    onClick={() => handleRemoveGalleryImage(idx)}
+                                    className="absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-red-600/90 text-white hover:bg-red-700 shadow transition-all cursor-pointer"
+                                    title="Remove this photo"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
+                                <input
+                                  type="text"
+                                  value={caption}
+                                  onChange={(e) => handleUpdateGalleryCaption(idx, e.target.value)}
+                                  placeholder="Photo caption..."
+                                  className="w-full p-1.5 text-[11px] rounded-lg border border-slate-200 bg-slate-50 focus:bg-white"
+                                />
+                                <div className="flex items-center justify-between gap-1 text-[10px]">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleSetAsCoverImage(url)}
+                                    className="text-emerald-800 hover:text-emerald-950 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                                    title="Make this the main cover photo"
+                                  >
+                                    <span>Set as Cover</span>
+                                  </button>
+                                  {moduleType === 'articles' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleInsertGalleryIntoContent({ url, caption })}
+                                      className="text-amber-800 hover:text-amber-950 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                                      title="Insert image directly into article body"
+                                    >
+                                      <span>Insert in Story</span>
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* Title / Name Fields */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
@@ -850,7 +1066,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <input
                         type="text"
                         required
-                        value={formData.title || formData.name || ''}
+                        value={formData.title ?? formData.name ?? ''}
                         onChange={(e) => setFormData({ ...formData, title: e.target.value, name: e.target.value })}
                         placeholder="Enter main heading or title"
                         className="w-full p-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-slate-50 font-medium"
@@ -861,7 +1077,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                       <label className="block font-bold text-slate-800 mb-1">Urdu / Kashmiri Title (Optional)</label>
                       <input
                         type="text"
-                        value={formData.titleUrdu || formData.kashmiriName || formData.kashmiriTitle || ''}
+                        value={formData.titleUrdu ?? formData.kashmiriName ?? formData.kashmiriTitle ?? ''}
                         onChange={(e) => setFormData({ 
                           ...formData, 
                           titleUrdu: e.target.value, 
@@ -973,18 +1189,20 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                           <label className="block font-bold text-slate-800 mb-1">Author Name</label>
                           <input
                             type="text"
-                            value={formData.author || 'Admin'}
+                            value={formData.author ?? ''}
                             onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                            className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium"
+                            placeholder="e.g. Admin, Bhat Sahil, Research Fellow..."
+                            className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium focus:ring-2 focus:ring-emerald-700"
                           />
                         </div>
                         <div>
                           <label className="block font-bold text-slate-800 mb-1">Author Role / Title</label>
                           <input
                             type="text"
-                            value={formData.authorRole || 'Heritage Contributor'}
+                            value={formData.authorRole ?? ''}
                             onChange={(e) => setFormData({ ...formData, authorRole: e.target.value })}
-                            className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium"
+                            placeholder="e.g. Heritage Contributor, Cultural Scholar..."
+                            className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium focus:ring-2 focus:ring-emerald-700"
                           />
                         </div>
                       </div>
@@ -993,10 +1211,10 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                         <label className="block font-bold text-slate-800 mb-1">Subtitle / Headline</label>
                         <input
                           type="text"
-                          value={formData.subtitle || ''}
+                          value={formData.subtitle ?? ''}
                           onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
                           placeholder="e.g. Historical analysis of the Reshi movement across the Kashmir valley"
-                          className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium text-xs"
+                          className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 font-medium text-xs focus:ring-2 focus:ring-emerald-700"
                         />
                       </div>
 
@@ -1004,10 +1222,10 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
                         <label className="block font-bold text-slate-800 mb-1">Short Excerpt / Card Summary</label>
                         <textarea
                           rows={2}
-                          value={formData.excerpt || ''}
+                          value={formData.excerpt ?? ''}
                           onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                           placeholder="A short 1-2 sentence preview summary shown on cards..."
-                          className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs"
+                          className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs focus:ring-2 focus:ring-emerald-700"
                         />
                       </div>
                     </>
@@ -1059,7 +1277,7 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
 
                     <textarea
                       rows={moduleType === 'articles' ? 8 : 5}
-                      value={formData.contentMarkdown || (moduleType !== 'articles' ? (formData.biography || formData.overview || formData.summary || formData.fullNarrative || '') : '')}
+                      value={formData.contentMarkdown ?? (moduleType !== 'articles' ? (formData.biography ?? formData.overview ?? formData.summary ?? formData.fullNarrative ?? '') : '')}
                       onChange={(e) => {
                         const val = e.target.value;
                         if (moduleType === 'articles') {

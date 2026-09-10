@@ -176,7 +176,10 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
           featured: data.featured === true,
           date: data.date || new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
           readTime: data.readTime || '5 min read',
-          tags: data.tags || ['Heritage', 'Kashmir', 'Sufism']
+          tags: data.tags || ['Heritage', 'Kashmir', 'Sufism'],
+          author: (data.author && data.author.trim()) || 'Admin',
+          authorRole: (data.authorRole && data.authorRole.trim()) || 'Heritage Contributor',
+          galleryImages: Array.isArray(data.galleryImages) ? data.galleryImages : []
         });
       } else if (formModalModule === 'saints') {
         await SupabaseService.saveSaint(data);
