@@ -25,7 +25,6 @@ import {
 import { Article, SufiSaint, HeritageSite, PoemVerse, PhotoGalleryItem } from '../../types';
 import { KashmiriCultureItem, FolkloreStory, CmsUser, CmsCategoryItem } from '../../types/cms';
 import { SupabaseService } from '../../services/supabaseService';
-import { FirebaseService } from '../../services/firebaseService';
 
 interface CrudFormModalProps {
   isOpen: boolean;
@@ -37,63 +36,63 @@ interface CrudFormModalProps {
 }
 
 // Ultra-efficient image optimization:
-// 1. Attempts Cloud Storage upload if available.
-// 2. Falls back to ultra-light canvas compression (max 800x650, JPEG quality 0.62)
-// This dramatically reduces image size from ~500KB down to ~25-35KB, allowing dozens of images without hitting Firestore's 1MB limit.
-export const optimizeImageFile = async (file: File): Promise<string> => {
-  // If Firebase Storage is available, attempt upload
-  try {
-    if (FirebaseService.isAvailable()) {
-      const storageUrl = await FirebaseService.uploadFile(file, 'articles');
-      if (storageUrl && !storageUrl.startsWith('blob:')) {
-        return storageUrl;
-      }
-    }
-  } catch (storageErr) {
-    // If Firebase Storage requires Blaze / billing or is not set up, fall back to ultra-compact web compression
-    console.warn('Firebase Storage upload skipped; falling back to ultra-efficient web compression:', storageErr);
-  }
-
-  return new Promise((resolve, reject) => {
+// Instant, ultra-compact client-side image compression:
+// Compresses uploaded photos directly in the browser via HTML5 Canvas (max 800x650 at quality 0.65 JPEG).
+// Converts images from ~500KB down to ~25-35KB instantly with zero network requests or delays,
+// guaranteeing that articles with multiple photos easily fit within Cloud Firestore's 1MB limit.
+export const optimizeImageFile = (file: File): Promise<string> => {
+  return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = () => {
+      const result = reader.result as string;
+      if (!result) {
+        resolve('');
+        return;
+      }
+      
       const img = new Image();
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 800;
-        const MAX_HEIGHT = 650;
-        let width = img.width;
-        let height = img.height;
+        try {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 800;
+          const MAX_HEIGHT = 650;
+          let width = img.width || 800;
+          let height = img.height || 600;
 
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height = Math.round((height * MAX_WIDTH) / width);
-            width = MAX_WIDTH;
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width = Math.round((width * MAX_HEIGHT) / height);
+              height = MAX_HEIGHT;
+            }
           }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width = Math.round((width * MAX_HEIGHT) / height);
-            height = MAX_HEIGHT;
-          }
-        }
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          // White background for PNG transparent images
-          ctx.fillStyle = '#FFFFFF';
-          ctx.fillRect(0, 0, width, height);
-          ctx.drawImage(img, 0, 0, width, height);
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+          }
+          const compressed = canvas.toDataURL('image/jpeg', 0.65);
+          console.log(`[ImageOptimizer] Processed "${file.name}" -> ${(compressed.length / 1024).toFixed(1)} KB`);
+          resolve(compressed);
+        } catch (canvasErr) {
+          console.warn('[ImageOptimizer] Canvas fallback:', canvasErr);
+          resolve(result);
         }
-        // Optimize to JPEG quality 0.62 (~25KB-35KB per photo)
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.62);
-        resolve(dataUrl);
       };
-      img.onerror = () => resolve(reader.result as string);
-      img.src = reader.result as string;
+      img.onerror = () => {
+        resolve(result);
+      };
+      img.src = result;
     };
-    reader.onerror = (error) => reject(error);
+    reader.onerror = () => resolve('');
     reader.readAsDataURL(file);
   });
 };
@@ -347,19 +346,22 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
       setIsUploading(true);
       try {
         const base64Url = await convertFileToBase64(file);
-        setImagePreview(base64Url);
-        setFormData((prev: any) => ({
-          ...prev,
-          heroImage: base64Url,
-          image: base64Url,
-          imageUrl: base64Url,
-          bannerImage: base64Url,
-          logo: base64Url
-        }));
+        if (base64Url) {
+          setImagePreview(base64Url);
+          setFormData((prev: any) => ({
+            ...prev,
+            heroImage: base64Url,
+            image: base64Url,
+            imageUrl: base64Url,
+            bannerImage: base64Url,
+            logo: base64Url
+          }));
+        }
       } catch (err) {
         console.error('File upload failed:', err);
       } finally {
         setIsUploading(false);
+        e.target.value = '';
       }
     }
   };
@@ -373,21 +375,29 @@ export const CrudFormModal: React.FC<CrudFormModalProps> = ({
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const base64Url = await convertFileToBase64(file);
-        const defaultCaption = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
-        newItems.push({ url: base64Url, caption: defaultCaption });
+        if (base64Url) {
+          const defaultCaption = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+          newItems.push({ url: base64Url, caption: defaultCaption });
+        }
       }
-      const existing = Array.isArray(formData.galleryImages) ? formData.galleryImages : [];
-      const updated = [...existing, ...newItems];
-      setFormData((prev: any) => ({ ...prev, galleryImages: updated }));
-      if (!formData.heroImage && !formData.image && newItems.length > 0) {
-        setImagePreview(newItems[0].url);
-        setFormData((prev: any) => ({
-          ...prev,
-          heroImage: newItems[0].url,
-          image: newItems[0].url,
-          imageUrl: newItems[0].url,
-          galleryImages: updated
-        }));
+      if (newItems.length > 0) {
+        setFormData((prev: any) => {
+          const existing = Array.isArray(prev.galleryImages) ? prev.galleryImages : [];
+          const updated = [...existing, ...newItems];
+          const shouldSetHero = !prev.heroImage && !prev.image;
+          return {
+            ...prev,
+            galleryImages: updated,
+            ...(shouldSetHero ? {
+              heroImage: newItems[0].url,
+              image: newItems[0].url,
+              imageUrl: newItems[0].url
+            } : {})
+          };
+        });
+        if (!imagePreview && newItems.length > 0) {
+          setImagePreview(newItems[0].url);
+        }
       }
     } catch (err) {
       console.error('Multiple file upload failed:', err);
