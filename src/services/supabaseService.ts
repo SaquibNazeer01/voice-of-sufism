@@ -216,7 +216,7 @@ export class SupabaseService {
   static async getSaints(): Promise<SufiSaint[]> {
     if (this.isUsingFirebase()) {
       const fb = await FirebaseService.getSaints();
-      if (fb && fb.length > 0) return fb;
+      return fb || [];
     }
     if (this.isUsingSupabase()) {
       try {

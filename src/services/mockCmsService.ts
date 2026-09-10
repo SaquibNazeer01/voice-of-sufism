@@ -77,6 +77,11 @@ export class MockCmsService {
         localStorage.removeItem(this.STORAGE_PREFIX + 'folklore');
         localStorage.removeItem(this.STORAGE_PREFIX + 'logs');
       }
+      const storedSaints = localStorage.getItem(this.STORAGE_PREFIX + 'saints');
+      if (storedSaints && (storedSaints.includes('sheikh-noor-ud-din') || storedSaints.includes('mir-sayyid-ali-hamadani') || storedSaints.includes('lal-ded') || storedSaints.includes('Nund Reshi'))) {
+        console.log('🧹 Cleansing legacy mock saints dummy data from browser storage...');
+        localStorage.removeItem(this.STORAGE_PREFIX + 'saints');
+      }
       this.IS_CLEANSED = true;
     } catch {
       this.IS_CLEANSED = true;
