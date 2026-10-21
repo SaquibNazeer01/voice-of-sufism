@@ -26,6 +26,7 @@ import { ZiyaratDetailModal } from './components/ZiyaratDetailModal';
 import { HERITAGE_SITES_DATA } from './data/heritageSites';
 import { Search, X, Compass, BookOpen, Feather, Filter, ShieldCheck, Sliders } from 'lucide-react';
 import { parseArticleSlugFromHash, findArticleBySlug, generateSlug } from './lib/shareUtils';
+import { sortArticlesNewestFirst } from './lib/articleUtils';
 
 export default function App() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -63,7 +64,7 @@ export default function App() {
     setIsArticlesLoading(true);
     try {
       const data = await SupabaseService.getArticles();
-      setArticles(data || []);
+      setArticles(sortArticlesNewestFirst(data || []));
     } catch {
       setArticles([]);
     } finally {
@@ -260,26 +261,27 @@ export default function App() {
     new Set(articles.flatMap(a => a.tags || []))
   );
 
-  const filteredArticles = articles.filter(article => {
-    if (!article) return false;
-    // Hide drafts from public site
-    if (article.status === 'Draft') return false;
-    const matchesCategory = selectedCategory === 'All' || article.category === selectedCategory;
-    const matchesRegion = selectedRegion === 'All Regions' || article.region === selectedRegion;
-    const matchesTag = !selectedTag || (article.tags && article.tags.includes(selectedTag));
-    const searchLower = searchQuery.toLowerCase();
-    const matchesSearch = !searchQuery || 
-      (article.title || '').toLowerCase().includes(searchLower) ||
-      (article.subtitle || '').toLowerCase().includes(searchLower) ||
-      (article.excerpt || '').toLowerCase().includes(searchLower) ||
-      (article.locationName || '').toLowerCase().includes(searchLower) ||
-      (article.author || '').toLowerCase().includes(searchLower) ||
-      (article.contentMarkdown || '').toLowerCase().includes(searchLower);
+  const filteredArticles = sortArticlesNewestFirst(
+    articles.filter(article => {
+      if (!article) return false;
+      // Hide drafts from public site
+      if (article.status === 'Draft') return false;
+      const matchesCategory = selectedCategory === 'All' || article.category === selectedCategory;
+      const matchesRegion = selectedRegion === 'All Regions' || article.region === selectedRegion;
+      const matchesTag = !selectedTag || (article.tags && article.tags.includes(selectedTag));
+      const searchLower = searchQuery.toLowerCase();
+      const matchesSearch = !searchQuery || 
+        (article.title || '').toLowerCase().includes(searchLower) ||
+        (article.subtitle || '').toLowerCase().includes(searchLower) ||
+        (article.excerpt || '').toLowerCase().includes(searchLower) ||
+        (article.locationName || '').toLowerCase().includes(searchLower) ||
+        (article.author || '').toLowerCase().includes(searchLower) ||
+        (article.contentMarkdown || '').toLowerCase().includes(searchLower);
 
-    return matchesCategory && matchesRegion && matchesTag && matchesSearch;
-  });
+      return matchesCategory && matchesRegion && matchesTag && matchesSearch;
+    })
+  );
 
-  const featuredStory = articles.find(a => a.featured) || articles[0] || null;
   const bookmarkedArticles = articles.filter(a => bookmarkedIds.includes(a.id));
 
   const isMaintenanceMode = siteSettings?.maintenanceMode === true;
@@ -356,8 +358,6 @@ export default function App() {
             
             {/* Magazine Cover Hero */}
             <HeroSection
-              featuredArticle={featuredStory}
-              onReadArticle={openArticle}
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}
               searchQuery={searchQuery}

@@ -23,6 +23,7 @@ import {
 import { Article, SufiSaint, HeritageSite, PoemVerse, PhotoGalleryItem } from '../../types';
 import { CmsUser, CmsCategoryItem, KashmiriCultureItem, FolkloreStory, SiteSettings, ActivityLog, Advertisement, Sponsor } from '../../types/cms';
 import { SupabaseService } from '../../services/supabaseService';
+import { sortArticlesNewestFirst } from '../../lib/articleUtils';
 
 import { OverviewTab } from './OverviewTab';
 import { CrudTableModule, ColumnDef } from './CrudTableModule';
@@ -119,7 +120,7 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
         SupabaseService.getActivityLogs().catch(() => [])
       ]);
 
-      setArticles(artList || []);
+      setArticles(sortArticlesNewestFirst(artList || []));
       setSaints(saintList || []);
       setSites(siteList || []);
       setPoems(poemList || []);

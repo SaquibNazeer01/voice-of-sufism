@@ -13,6 +13,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage, isFirebaseConfigured } from '../lib/firebaseClient';
 import { Article, SufiSaint, HeritageSite, PoemVerse, PhotoGalleryItem } from '../types';
 import { CmsUser, CmsCategoryItem, KashmiriCultureItem, FolkloreStory, SiteSettings, ActivityLog, Advertisement, Sponsor } from '../types/cms';
+import { sortArticlesNewestFirst } from '../lib/articleUtils';
 
 export interface FirebaseHealthStatus {
   isConfigured: boolean;
@@ -146,7 +147,7 @@ export class FirebaseService {
       snapshot.forEach(docSnap => {
         items.push({ id: docSnap.id, ...(docSnap.data() as any) });
       });
-      return items;
+      return sortArticlesNewestFirst(items);
     } catch (err) {
       console.error('Firebase getArticles error:', err);
       return [];
@@ -166,9 +167,12 @@ export class FirebaseService {
             .map((item: any) => typeof item === 'string' ? { url: item, caption: '' } : { url: item.url, caption: item.caption || '' })
         : [];
 
+      const formattedToday = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
       const payload = {
         ...article,
         id,
+        date: article.date || formattedToday,
+        createdAt: (article as any).createdAt || new Date().toISOString(),
         galleryImages: normalizedGallery,
         updatedAt: new Date().toISOString()
       };

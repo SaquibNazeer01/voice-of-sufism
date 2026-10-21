@@ -19,7 +19,8 @@ import {
   Maximize2,
   ZoomIn,
   Camera,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Calendar
 } from 'lucide-react';
 import { SharePanel, ShareBar } from './SharePanel';
 
@@ -310,6 +311,15 @@ export const ReadingViewModal: React.FC<ReadingViewModalProps> = ({
                 <Clock className="w-3.5 h-3.5 text-amber-600" />
                 <span>{article.readTime}</span>
               </span>
+              {article.date && (
+                <>
+                  <span>•</span>
+                  <span className="flex items-center space-x-1 text-red-800 dark:text-amber-300">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>{article.date}</span>
+                  </span>
+                </>
+              )}
               <span>•</span>
               <span>By {article.author} ({article.authorRole})</span>
             </div>
@@ -575,8 +585,8 @@ export const ReadingViewModal: React.FC<ReadingViewModalProps> = ({
             </div>
           )}
 
-          {/* Share This Story — prominent bar before Return button */}
-          <div className={`rounded-2xl p-5 sm:p-6 border ${themeMode === 'dark' ? 'bg-[#0c0c0e] border-white/[0.07]' : themeMode === 'sepia' ? 'bg-[#F4EFEA] border-amber-200/60' : 'bg-[#09090B] border-white/[0.06]'}`}>
+          {/* Share This Story — compact and professional bar before Return button */}
+          <div className={`rounded-2xl p-3.5 sm:p-5 border shadow-sm ${themeMode === 'dark' ? 'bg-[#0c0c0e] border-white/[0.07]' : themeMode === 'sepia' ? 'bg-[#FAF5EE] border-amber-200/60' : 'bg-[#09090B] border-white/[0.06]'}`}>
             <ShareBar article={article} />
           </div>
 

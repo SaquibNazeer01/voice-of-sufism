@@ -4,6 +4,7 @@ import { CmsUser, CmsCategoryItem, CmsTagItem, KashmiriCultureItem, FolkloreStor
 import { ApiService } from './apiService';
 import { FirebaseService } from './firebaseService';
 import { MockCmsService } from './mockCmsService';
+import { sortArticlesNewestFirst } from '../lib/articleUtils';
 
 export class SupabaseService {
   // Check active backend mode
@@ -58,7 +59,7 @@ export class SupabaseService {
     if (this.isUsingFirebase()) {
       try {
         const fbArticles = await FirebaseService.getArticles();
-        if (fbArticles && fbArticles.length > 0) return fbArticles;
+        if (fbArticles && fbArticles.length > 0) return sortArticlesNewestFirst(fbArticles);
       } catch (e) {
         console.warn('Firebase getArticles error:', e);
       }
@@ -72,7 +73,7 @@ export class SupabaseService {
           .order('created_at', { ascending: false });
 
         if (!error && data && data.length > 0) {
-          return data.map(item => ({
+          const mapped: Article[] = data.map(item => ({
             id: item.id,
             title: item.title,
             titleUrdu: item.title_urdu,
@@ -99,6 +100,7 @@ export class SupabaseService {
             audioKalamUrl: item.audio_kalam_url,
             tags: item.tags || []
           }));
+          return sortArticlesNewestFirst(mapped);
         }
       } catch (err) {
         console.warn('Supabase articles query error:', err);
@@ -107,9 +109,10 @@ export class SupabaseService {
 
     const serverArticles = await ApiService.getArticles();
     if (serverArticles && serverArticles.length > 0) {
-      return serverArticles;
+      return sortArticlesNewestFirst(serverArticles);
     }
-    return MockCmsService.getArticles();
+    const mockArticles = await MockCmsService.getArticles();
+    return sortArticlesNewestFirst(mockArticles);
   }
 
   static async saveArticle(article: Article): Promise<Article> {

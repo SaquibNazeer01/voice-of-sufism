@@ -1,6 +1,6 @@
 import React from 'react';
 import { Article } from '../types';
-import { Bookmark, Clock, MapPin, ArrowUpRight, Camera } from 'lucide-react';
+import { Bookmark, Clock, MapPin, ArrowUpRight, Camera, Calendar } from 'lucide-react';
 import { SharePanel } from './SharePanel';
 
 interface ArticleCardProps {
@@ -108,9 +108,17 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
       </div>
 
       {/* Card body */}
-      <div className={`p-5 flex-1 flex flex-col gap-3 ${isDark ? '' : ''}`}>
+      <div className={`p-4 sm:p-5 flex-1 flex flex-col gap-3 ${isDark ? '' : ''}`}>
         <div className="flex-1 space-y-2">
-          <h3 className={`font-editorial text-[19px] sm:text-xl font-bold leading-snug line-clamp-2 transition-colors ${titleColor}`}>
+          {/* Published Date Bar */}
+          {article.date && (
+            <div className="flex items-center gap-1.5 text-[11px] font-ui text-slate-500 dark:text-slate-400">
+              <Calendar className="w-3 h-3 text-red-700 dark:text-amber-400 flex-shrink-0" />
+              <span className="font-medium tracking-wide">{article.date}</span>
+            </div>
+          )}
+
+          <h3 className={`font-editorial text-[18px] sm:text-xl font-bold leading-snug line-clamp-2 transition-colors ${titleColor}`}>
             {article.title}
           </h3>
 
@@ -144,17 +152,25 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
         )}
 
         {/* Footer */}
-        <div className={`pt-3 border-t flex items-center justify-between text-[12px] font-ui ${metaColor}`}>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-red-900 text-amber-300 font-editorial font-bold text-[10px] flex items-center justify-center flex-shrink-0">
+        <div className={`pt-3 border-t flex items-center justify-between gap-2 text-[12px] font-ui ${metaColor}`}>
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-7 h-7 rounded-full bg-red-900 text-amber-300 font-editorial font-bold text-[10px] flex items-center justify-center flex-shrink-0 shadow-xs">
               {(article.author || 'Sufi Voice').charAt(0).toUpperCase()}
             </div>
-            <span className={`truncate max-w-[100px] font-semibold ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>
-              {article.author || 'Editorial Team'}
-            </span>
+            <div className="flex flex-col min-w-0">
+              <span className={`truncate max-w-[95px] sm:max-w-[130px] font-semibold text-[11px] sm:text-xs ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+                {article.author || 'Editorial Team'}
+              </span>
+              {article.date && (
+                <span className="flex items-center gap-1 text-[10px] text-slate-400 truncate">
+                  <Calendar className="w-2.5 h-2.5 text-red-700 dark:text-amber-400 flex-shrink-0" />
+                  <span className="truncate">{article.date}</span>
+                </span>
+              )}
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
             {/* Share button */}
             <SharePanel
               article={article}
@@ -163,7 +179,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
               triggerClassName={`${isDark ? 'text-slate-500 hover:text-amber-400' : 'text-slate-400 hover:text-amber-500'}`}
             />
 
-            <span className="flex items-center gap-0.5 text-amber-600 font-semibold group-hover:text-red-800 transition-colors">
+            <span className="flex items-center gap-0.5 text-amber-600 font-semibold text-xs group-hover:text-red-800 transition-colors">
               Read
               <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </span>

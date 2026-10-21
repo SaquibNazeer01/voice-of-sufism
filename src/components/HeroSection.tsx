@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { Article, CategoryType } from '../types';
-import { BookOpen, MapPin, ArrowRight, Compass, ShieldCheck, Phone, Mail, Calendar, Building2, Copy, Check, Camera } from 'lucide-react';
+import { ShieldCheck, Phone, Mail, Calendar, Building2, Copy, Check } from 'lucide-react';
 
 interface HeroSectionProps {
   featuredArticle?: Article | null;
-  onReadArticle: (article: Article) => void;
-  selectedCategory: CategoryType;
-  setSelectedCategory: (cat: CategoryType) => void;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
+  onReadArticle?: (article: Article) => void;
+  selectedCategory?: CategoryType;
+  setSelectedCategory?: (cat: CategoryType) => void;
+  searchQuery?: string;
+  setSearchQuery?: (query: string) => void;
 }
 
 /* ── Social icon SVGs ───────────────────────────────────────── */
@@ -67,9 +67,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             alt="Voice of Sufism – Heritage Publication"
             className="absolute inset-0 w-full h-full object-cover object-top block"
             onError={(e) => {
-              if (featuredArticle?.heroImage) {
-                (e.currentTarget as HTMLImageElement).src = featuredArticle.heroImage;
-              }
+              (e.currentTarget as HTMLImageElement).src = featuredArticle?.heroImage || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1600&q=80';
             }}
           />
           {/* Subtle bottom scrim for readability */}
@@ -207,179 +205,79 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       </div>
 
       {/* ══════════════════════════════════════════════
-          FEATURED ARTICLE EDITORIAL SECTION
+          OFFICIAL MSME GOVERNMENT REGISTRATION BADGE
+          (Featured Cover Story removed per editorial requirements)
       ══════════════════════════════════════════════ */}
-      {featuredArticle && (
-        <div className="bg-white border-b border-slate-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-
-            {/* Section label */}
-            <div className="flex items-center gap-3 mb-8">
-              <span className="w-8 h-px bg-red-900" />
-              <span className="text-[10px] font-ui font-bold uppercase tracking-widest text-red-900">
-                Featured Cover Story
-              </span>
-              <span className="flex-1 h-px bg-slate-100" />
-            </div>
-
-            {/* Two-column editorial layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-start">
-
-              {/* Left: text content */}
-              <div className="lg:col-span-7 space-y-5 animate-fadeInUp">
-
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="px-3 py-1 rounded-full text-[10px] font-ui font-bold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-200">
-                    {featuredArticle.category}
-                  </span>
-                  <span className="flex items-center gap-1 text-[11px] font-ui text-red-800">
-                    <MapPin className="w-3 h-3 text-red-600" />
-                    {featuredArticle.locationName}
-                  </span>
+      <div className="bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7">
+          <div className="rounded-2xl bg-gradient-to-r from-slate-900 via-red-950 to-slate-950 border-2 border-amber-400/40 p-4 sm:p-6 text-white shadow-xl hover:border-amber-400/70 transition-all">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-5">
+              {/* Left / Info */}
+              <div className="flex items-start sm:items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center flex-shrink-0 shadow-lg border-2 border-amber-300">
+                  <Building2 className="w-5 h-5 sm:w-7 sm:h-7 text-slate-950" />
                 </div>
-
-                <h1 className="font-editorial text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-950 leading-[1.1] tracking-tight">
-                  {featuredArticle.title}
-                </h1>
-
-                {featuredArticle.titleUrdu && (
-                  <p className="font-editorial text-lg text-red-800 font-medium italic" dir="rtl">
-                    {featuredArticle.titleUrdu}
-                  </p>
-                )}
-
-                <p className="font-ui text-slate-600 text-sm sm:text-base leading-relaxed max-w-xl">
-                  {featuredArticle.excerpt}
-                </p>
-
-                {/* Author + CTA row */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-2 border-t border-slate-100">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-red-900 text-amber-300 font-editorial font-bold flex items-center justify-center text-sm shadow-sm">
-                      {featuredArticle.author?.charAt(0) || 'S'}
-                    </div>
-                    <div>
-                      <p className="text-xs font-ui font-bold text-slate-900">{featuredArticle.author}</p>
-                      <p className="text-[11px] font-ui text-slate-400">{featuredArticle.authorRole} · {featuredArticle.readTime}</p>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => onReadArticle(featuredArticle)}
-                    className="sm:ml-auto flex items-center gap-2 px-6 py-3 rounded-xl bg-red-900 hover:bg-red-800 text-white text-sm font-ui font-semibold shadow-lg shadow-red-900/20 hover:shadow-red-900/30 transition-all group border border-amber-500/20"
-                  >
-                    <BookOpen className="w-4 h-4 text-amber-400" />
-                    <span>Read Feature Story</span>
-                    <ArrowRight className="w-4 h-4 text-amber-400 group-hover:translate-x-0.5 transition-transform" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Right: article thumbnail */}
-              <div className="lg:col-span-5">
-                <div
-                  onClick={() => onReadArticle(featuredArticle)}
-                  className="relative rounded-2xl overflow-hidden shadow-2xl group cursor-pointer border border-slate-200 bg-slate-950"
-                >
-                  <img
-                    src={featuredArticle.heroImage}
-                    alt={featuredArticle.title}
-                    referrerPolicy="no-referrer"
-                    className="w-full h-[260px] sm:h-[340px] lg:h-[400px] object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                  <div className="absolute bottom-5 left-5 right-5 text-white space-y-2">
-                    <div className="flex items-center justify-between">
-                      <p className="text-[10px] font-ui uppercase tracking-widest text-amber-400 font-bold">Cover Story</p>
-                      {featuredArticle.galleryImages && featuredArticle.galleryImages.length > 0 && (
-                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-ui font-bold bg-black/75 backdrop-blur-md text-amber-300 border border-amber-400/40 flex items-center gap-1 shadow-sm">
-                          <Camera className="w-3 h-3 text-amber-400" />
-                          <span>{featuredArticle.galleryImages.length + 1} Photos</span>
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="font-editorial text-lg sm:text-xl font-bold leading-snug group-hover:text-amber-200 transition-colors">
-                      {featuredArticle.subtitle}
-                    </h3>
-                    <span className="inline-flex items-center gap-1 text-xs font-ui text-amber-400 font-semibold">
-                      <span>Explore full story</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/40">
+                      <ShieldCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
+                      Government Recognized Archive
+                    </span>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Verified Active
                     </span>
                   </div>
+                  <h3 className="font-editorial text-base sm:text-xl font-bold text-white tracking-wide">
+                    Registered Under MSME, Government of India
+                  </h3>
+                  <p className="text-[11px] sm:text-xs text-slate-300">
+                    Ministry of Micro, Small &amp; Medium Enterprises • Srinagar, Jammu &amp; Kashmir
+                  </p>
                 </div>
               </div>
-            </div>
 
-            {/* ── Official MSME Government Registration Card ────────────────── */}
-            <div className="mt-10 rounded-2xl bg-gradient-to-r from-slate-900 via-red-950 to-slate-950 border-2 border-amber-400/40 p-5 sm:p-6 text-white shadow-xl hover:border-amber-400/70 transition-all">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
-                {/* Left / Info */}
-                <div className="flex items-start sm:items-center gap-4">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center flex-shrink-0 shadow-lg border-2 border-amber-300">
-                    <Building2 className="w-6 h-6 sm:w-7 sm:h-7 text-slate-950" />
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/40">
-                        <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                        Government Recognized Archive
-                      </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        Verified Active
-                      </span>
-                    </div>
-                    <h3 className="font-editorial text-lg sm:text-xl font-bold text-white tracking-wide">
-                      Registered Under MSME, Government of India
-                    </h3>
-                    <p className="text-xs text-slate-300">
-                      Ministry of Micro, Small & Medium Enterprises • Srinagar, Jammu & Kashmir
-                    </p>
-                  </div>
+              {/* Right / Registration Number Card */}
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 bg-black/40 border border-amber-400/30 rounded-xl p-2.5 sm:px-4 sm:py-3 self-stretch lg:self-auto justify-between lg:justify-end">
+                <div>
+                  <p className="text-[9px] sm:text-[10px] font-bold tracking-widest uppercase text-amber-300/80">
+                    Registration Number
+                  </p>
+                  <p className="font-mono text-xs sm:text-base font-black text-amber-300 tracking-wider select-all">
+                    UDYAM-JK-11-0013563
+                  </p>
                 </div>
-
-                {/* Right / Registration Number Card */}
-                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 bg-black/40 border border-amber-400/30 rounded-xl p-3 sm:px-4 sm:py-3 self-stretch lg:self-auto justify-between lg:justify-end">
-                  <div>
-                    <p className="text-[10px] font-bold tracking-widest uppercase text-amber-300/80">
-                      Registration Number
-                    </p>
-                    <p className="font-mono text-sm sm:text-base font-black text-amber-300 tracking-wider select-all">
-                      UDYAM-JK-11-0013563
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText('UDYAM-JK-11-0013563');
-                      setCopiedMsme(true);
-                      setTimeout(() => setCopiedMsme(false), 2000);
-                    }}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer ${
-                      copiedMsme
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-amber-400 hover:bg-amber-300 text-slate-950'
-                    }`}
-                    title="Copy Registration Number"
-                  >
-                    {copiedMsme ? (
-                      <>
-                        <Check className="w-3.5 h-3.5" />
-                        <span>Copied!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5" />
-                        <span>Copy</span>
-                      </>
-                    )}
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText('UDYAM-JK-11-0013563');
+                    setCopiedMsme(true);
+                    setTimeout(() => setCopiedMsme(false), 2000);
+                  }}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer ${
+                    copiedMsme
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-amber-400 hover:bg-amber-300 text-slate-950'
+                  }`}
+                  title="Copy Registration Number"
+                >
+                  {copiedMsme ? (
+                    <>
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy</span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </section>
   );
 };
